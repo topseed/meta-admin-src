@@ -1,0 +1,29 @@
+extends /plugin/_layout
+//- App Shell
+
+block head
+	//static binding ex:
+	title #{title}
+
+block main
+	p
+	br
+	p
+	.ui.text.container
+		#Pform.ui.form
+			h4.ui.dividing.header Admin Form
+			.field
+				label Secret
+				input(type='text', name='secret', placeholder='123')
+		p
+		include nbake
+		include clone
+		include i
+		//include newBlog
+		//include plugIn
+
+	script.
+		loadjs.ready('site', function () {
+			console.log('page 1 script here')
+		})
+
