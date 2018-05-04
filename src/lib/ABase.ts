@@ -12,6 +12,12 @@ const fse = require('fs-extra')
 
 import { Meta, Dirs, Bake, Items, Tag, NBake } from 'nbake/lib/Base'
 
+export class MetaAdmin {
+	ver() {
+		return "v3.05.06"
+	}
+}
+
 export class FileOps {
 	root
 	constructor(root_) {
@@ -231,5 +237,5 @@ export class Srv {
 
 
 module.exports = {
-	Srv, FileOps
+	Srv, FileOps, MetaAdmin
 }

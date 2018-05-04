@@ -1,9 +1,12 @@
 
+www_admin
+
 node_modules/
 
 package-lock.json
 
 yarn.lock
 
-
 *.ts
+
+index.*

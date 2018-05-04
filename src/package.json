@@ -1,12 +1,9 @@
 {
-	"name": "nbake-admin",
-	"version": "3.05.04",
-	"description": "nbake admin",
+	"name": "meta-admin",
+	"version": "3.05.06",
+	"description": "meta nbake admin",
 	"main": "index.js",
-	"bin": {
-		"nbake-admin": "index.js",
-		"nbake-admin-cli": "index.js"
-	},
+
 	"license": "APACHE2",
 	"author": "http://github.com/topseed",
 	"bugs": "https://github.com/topseed",

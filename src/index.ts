@@ -5,7 +5,7 @@ declare var console: Console
 declare var __dirname: any
 
 import { Meta, Dirs, Bake, Items, Tag, NBake } from 'nbake/lib/Base'
-import { Srv, FileOps } from './ABase'
+import { Srv, FileOps } from './lib/ABase'
 
 const os = require('os')
 const fs = require('fs')
