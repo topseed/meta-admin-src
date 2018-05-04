@@ -10,7 +10,7 @@
 	"homepage":"http://github.com/topseed",
 	"repository": {
 		"type": "git",
-		"url": "http://github.com/topseed",
+		"url": "http://github.com/topseed"
 	},
 	"keywords": [
 		"nbake"
