@@ -6,17 +6,17 @@
 
 	"license": "APACHE2",
 	"author": "http://github.com/topseed",
-	"bugs": "https://github.com/topseed",
-	"homepage": "https://github.com/topseed",
+	"bugs": "http://github.com/topseed",
+	"homepage":"http://github.com/topseed",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/topseed"
+		"url": "http://github.com/topseed",
 	},
 	"keywords": [
 		"nbake"
 	],
 	"engines": {
-		"node": ">=8.10"
+		"node": ">=8.11"
 	},
 	"dependencies": {
 		"express": "^4.16.3",
