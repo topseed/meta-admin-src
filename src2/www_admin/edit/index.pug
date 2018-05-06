@@ -1,0 +1,18 @@
+extends /plugin/_layout
+//- App Shell
+
+block head
+	//static binding ex:
+	title #{title}
+
+block main
+	script(src='//cdn.jsdelivr.net/npm/split.js@1.3.5/split.min.js')
+	p
+	.ui.text.container
+		include _pinc.pug
+
+	script.
+		loadjs.ready('style', function () {
+			console.log('page 1 script here')
+		})
+
