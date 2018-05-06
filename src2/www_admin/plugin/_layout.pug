@@ -1,42 +1,42 @@
 doctype html
 html
 	head
-		include _header
-		block head
-		style.
-			html { opacity: 0.05; }
 		script.
 			let _start=Date.now()
-	body
+		include _header
 		script(src='//cdn.jsdelivr.net/npm/loadjs@3.5.4/dist/loadjs.min.js')
+		script(src='//cdn.jsdelivr.net/npm/riot@3.9.5/riot.min.js')
+
+		block head
+		style.
+			html { opacity: 0.005; }
+
+	body
+		script(src='/assets/js/setup.js')
+
 		//- side menu shell
 		include _top
+
 		//- container
 		.pusher
 
-			//- pushed state
+			//- pushed
 			block main
 
-		script(src='/assets/js/setup.js')
-		link(rel='stylesheet', href='/assets/Semantic-UI/dist/semantic.min.css', onload='cssLoaded()')
 		script.
-			//above is for fast loading
-			//- see https://github.com/muicss/loadjs
-
 			console.log('layout')
 
 			loadjs.ready('site', function() {
 				//show a bit
-				document.getElementsByTagName('html')[0].style.opacity = .1
+				document.getElementsByTagName('html')[0].style.opacity = .01
 			})
 
 			loadjs.ready('style', function() {
 				setTimeout(function(){
 					document.getElementsByTagName('html')[0].style.opacity = 1
-					console.log(Date.now()-_start)//time to show 
-				},1000/15)// 2 frames at 30fps
-				
-				$('.ui.sidebar').sidebar('attach events', '.toc.item')
-			
+					console.log(Date.now()-_start)//time to show
+				},1000/60)// 2 frames
+
 			})//ready
+		link(rel='stylesheet', href='/assets/Semantic-UI/dist/semantic.min.css', onload='cssLoaded()')
 
