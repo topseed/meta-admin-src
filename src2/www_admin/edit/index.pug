@@ -13,7 +13,10 @@ block main
 	div.splitCont
 		#left.split.split-horizontal
 			p o hi2
+			p o hi2
+
 		#right.split.split-horizontal
+			p o hi3
 			p o hi3
 
 	script.
@@ -27,44 +30,38 @@ block main
 		})
 
 	style.
+		body {
+			overflow:hidden;
+		}
+
 		.splitCont {
 			width: calc(100% - 10px);
 			min-height: calc(100vh - 80px);
-			border: 2px solid black;
+			border: 2px solid #ddd;
 		}
-		#left {
 
-		}
-		#right {
-
-		}
 		.split {
 			-webkit-box-sizing: border-box;
 				-moz-box-sizing: border-box;
 						box-sizing: border-box;
 
 			overflow-y: auto;
-			overflow-x: hidden;
+			overflow-x: auto;
 		}
 
 		.gutter {
-			background-color: black;
+			background-color: #eee;
 
 			background-repeat: no-repeat;
 			background-position: 50%;
 		}
 
 		.gutter.gutter-horizontal {
-			background-image:  url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==')
+			background-image: url('assets/vertical.png');
 			cursor: ew-resize;
 		}
 
-		.gutter.gutter-vertical {
-			background-image:  url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAFAQMAAABo7865AAAABlBMVEVHcEzMzMzyAv2sAAAAAXRSTlMAQObYZgAAABBJREFUeF5jOAMEEAIEEFwAn3kMwcB6I2AAAAAASUVORK5CYII=')
-			cursor: ns-resize;
-		}
-
 		.split.split-horizontal, .gutter.gutter-horizontal {
-			height: 100%;
+			height: calc(100vh - 84px);
 			float: left;
 		}

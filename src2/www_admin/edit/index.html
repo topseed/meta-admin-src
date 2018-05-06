@@ -10,7 +10,7 @@
 .pusher {
 	margin-top: 1.5em;
 	margin-left: 250px;
-}</style><div class="pusher"><script src="//cdn.jsdelivr.net/npm/split.js@1.3.5/split.min.js"></script><p></p><br><p></p><div class="splitCont"><div class="split split-horizontal" id="left"><p>o hi2</p></div><div class="split split-horizontal" id="right"><p>o hi3</p></div></div><script>let split = Split(['#left', '#right'], {
+}</style><div class="pusher"><script src="//cdn.jsdelivr.net/npm/split.js@1.3.5/split.min.js"></script><p></p><br><p></p><div class="splitCont"><div class="split split-horizontal" id="left"><p>o hi2</p><p>o hi2</p></div><div class="split split-horizontal" id="right"><p>o hi3</p><p>o hi3</p></div></div><script>let split = Split(['#left', '#right'], {
 	sizes: [20, 80],
 	minSize: [100, 300]
 })
@@ -18,45 +18,39 @@
 loadjs.ready('style', function () {
 	console.log('page x script here')
 })
-</script><style>.splitCont {
-	width: 100%;
+</script><style>body {
+	overflow:hidden;
+}
+
+.splitCont {
+	width: calc(100% - 10px);
 	min-height: calc(100vh - 80px);
-	border: 2px solid black;
+	border: 2px solid #ddd;
 }
-#left {
 
-}
-#right {
-
-}
 .split {
 	-webkit-box-sizing: border-box;
 		-moz-box-sizing: border-box;
 				box-sizing: border-box;
 
 	overflow-y: auto;
-	overflow-x: hidden;
+	overflow-x: auto;
 }
 
 .gutter {
-	background-color: black;
+	background-color: #eee;
 
 	background-repeat: no-repeat;
 	background-position: 50%;
 }
 
 .gutter.gutter-horizontal {
-	background-image: url('../grips/vertical.png');
+	background-image: url('assets/vertical.png');
 	cursor: ew-resize;
 }
 
-.gutter.gutter-vertical {
-	background-image: url('../grips/horizontal.png');
-	cursor: ns-resize;
-}
-
 .split.split-horizontal, .gutter.gutter-horizontal {
-	height: 100%;
+	height: calc(100vh - 84px);
 	float: left;
 }</style></div><script>console.log('layout')
 
