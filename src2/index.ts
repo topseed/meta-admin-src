@@ -59,5 +59,5 @@ let config = yaml.load(fs.readFileSync(arg))
 console.log(config)
 
 const srv = new Srv(bake, itemize, config)
-srv.s()
-srv.start()
+srv.apiSetup()
+srv.static()

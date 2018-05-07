@@ -59,7 +59,7 @@ export class Srv {
 		res.send(msg)
 	}
 
-	u() {//upload
+	uploadSetup() {//upload
 		const secretProp = 'secret'
 		const folderProp = 'folder'
 		const SECRET = Srv.prop.secret
@@ -136,96 +136,109 @@ export class Srv {
 		}
 	}//()
 
-	s() {//api
-		this.u()
-
-		const secretProp = 'secret'
-		const folderProp = 'folder'
-		const SECRET = Srv.prop.secret
-
-		const srcProp = 'src'
-		const destProp = 'dest'
-
-		this.app.get('/items', function (req, res) {
-			let qs = req.query
-			let keys = Object.keys( qs )
+	static checkSecret(qs, res):boolean {
+		logger.trace('remove')
+		try {
 			logger.trace(JSON.stringify(qs))
-
-			if(!keys.includes(secretProp)) {
+			let keys = Object.keys( qs )
+			if(!keys.includes(Srv.secretProp)) {
 				Srv.ret(res, 'no secret')
-				return
+				return false
 			}
 			let secret = qs.secret
-			if(secret != SECRET) {
+			if(secret != Srv.SECRET) {
 				Srv.ret(res, 'wrong')
-				return
+				return false
 			}
+			return true
+		} catch(e) {
+			logger.trace(e)
+			Srv.ret(res, e)
+			return false
+		}
+	}//()
 
-			try {
-				let msg = Srv.itemize(qs[folderProp])
-				Srv.ret(res, msg)
-			} catch(err) {
-				Srv.ret(res, err)
-			}
+	static secretProp = 'secret'
+	static folderProp = 'folder'
+	static SECRET = Srv.prop.secret
 
-		})
+	static srcProp = 'src'
+	static destProp = 'dest'
 
-		this.app.get('/clone', function (req, res) {
+	apiSetup() {//api
+		this.uploadSetup()
+
+		this.app.get('/api/list', function (req, res) {
 			let qs = req.query
+			if(!Srv.checkSecret(qs,res))
+				return;
 			let keys = Object.keys( qs )
-			logger.trace(JSON.stringify(qs))
-
-			if(!keys.includes(secretProp)) {
-				Srv.ret(res, 'no secret')
-				return
-			}
-			let secret = qs.secret
-			if(secret != SECRET) {
-				Srv.ret(res, 'wrong')
-				return
-			}
-
-			let src = qs[srcProp]
-			let dest = qs[destProp]
-			let f = new FileOps(Srv.prop.mount)
-			let ret = f.clone(src,dest)
-			Srv.ret(res, ret)
-
-		})
-
-		this.app.get('/bake', function (req, res) {
-			let qs = req.query
-			let keys = Object.keys( qs )
-			logger.trace(JSON.stringify(qs))
-
-			if(!keys.includes(secretProp)) {
-				Srv.ret(res, 'no secret')
-				return
-			}
-			let secret = qs.secret
-			if(secret != SECRET) {
-				Srv.ret(res, 'wrong')
-				return
-			}
-			if(!keys.includes(folderProp)) {
+			if(!keys.includes(Srv.folderProp)) {
 				Srv.ret(res,'no folder')
 				return
 			}
 
 			try {
-				let msg = Srv.bake(qs[folderProp])
+				let msg = Srv.itemize(qs[Srv.folderProp])
 				Srv.ret(res, msg)
 			} catch(err) {
 				Srv.ret(res, err)
 			}
+		})//
 
-		})// api route
+		this.app.get('/api/items', function (req, res) {
+			let qs = req.query
+			if(!Srv.checkSecret(qs,res))
+				return;
+			let keys = Object.keys( qs )
+			if(!keys.includes(Srv.folderProp)) {
+				Srv.ret(res,'no folder')
+				return
+			}
+
+			try {
+				let msg = Srv.itemize(qs[Srv.folderProp])
+				Srv.ret(res, msg)
+			} catch(err) {
+				Srv.ret(res, err)
+			}
+		})//
+
+		this.app.get('/api/clone', function (req, res) {
+			let qs = req.query
+			if(!Srv.checkSecret(qs,res))
+				return;
+			let keys = Object.keys( qs )
+
+			let src = qs[Srv.srcProp]
+			let dest = qs[Srv.destProp]
+			let f = new FileOps(Srv.prop.mount)
+			let ret = f.clone(src,dest)
+			Srv.ret(res, ret)
+		})//
+
+		this.app.get('/api/bake', function (req, res) {
+			let qs = req.query
+			if(!Srv.checkSecret(qs,res))
+				return;
+			let keys = Object.keys( qs )
+			if(!keys.includes(Srv.folderProp)) {
+				Srv.ret(res,'no folder')
+				return
+			}
+
+			try {
+				let msg = Srv.bake(qs[Srv.folderProp])
+				Srv.ret(res, msg)
+			} catch(err) {
+				Srv.ret(res, err)
+			}
+		})//
 
 		return this
-
 	}//()
 
-	start() {
+	static() {
 		this.app.use(express.static(__dirname + '/www_admin'))
 
 		this.app.listen(Srv.prop.port, function () {
