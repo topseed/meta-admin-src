@@ -1,0 +1,38 @@
+
+br
+p Hello !
+table#list1.display(width='95%')
+
+script.
+	loadjs.ready('core', function () {
+		loadjs([
+			 '//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css'
+			,'//cdn.datatables.net/1.10.16/css/dataTables.semanticui.min.css'
+			,'//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js'
+		], 'dat', { // bundle ID
+			async: false //required due to loadjs bug with bundles
+		})//load
+	})//ready
+	loadjs.ready(['dat'], function () {
+
+			var dataSet = [
+				['First post', 'blog/2013/second-post', 123, 'post', 'ok'] ,
+				['First post', 'blog/2013/second-post', 123, 'post', 'ok']
+			]
+
+			$('#list1').DataTable( {
+				//scrollY: 400,
+				paging: true,
+				//'lengthChange': false,
+				//'info' : false,
+				data: dataSet,
+				columns: [
+						{ title: 'Title' },
+						{ title: 'Item' },
+						{ title: 'Date' },
+						{ title: 'Type' },
+						{ title: 'Status' },
+				]
+			} )//dt
+
+	})//ready

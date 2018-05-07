@@ -10,6 +10,8 @@ block main
 	p
 	br
 	p
+	input#page1(type='text', name='page', placeholder='blog')
+	p
 	div.splitCont
 		#left.split.split-horizontal
 			p o hi2
@@ -21,8 +23,8 @@ block main
 
 	script.
 		let split = Split(['#left', '#right'], {
-			sizes: [20, 80],
-			minSize: [100, 300]
+			sizes: [25, 75],
+			minSize: [120, 300]
 		})
 
 		loadjs.ready('style', function () {
@@ -34,10 +36,15 @@ block main
 			overflow:hidden;
 		}
 
+		#page1 {
+			width: 99%
+		}
+
 		.splitCont {
 			width: calc(100% - 10px);
 			min-height: calc(100vh - 80px);
-			border: 2px solid #ddd;
+			border: 3px solid #ddd;
+			border-radius: 5px;
 		}
 
 		.split {
@@ -51,7 +58,6 @@ block main
 
 		.gutter {
 			background-color: #eee;
-
 			background-repeat: no-repeat;
 			background-position: 50%;
 		}
