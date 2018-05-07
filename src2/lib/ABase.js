@@ -6,6 +6,7 @@ const os = require('os');
 const logger = require('tracer').console();
 const fse = require('fs-extra');
 const fs = require('fs');
+const bodyParser = require('body-parser');
 class MetaAdmin {
     ver() {
         return "v3.05.06";
@@ -38,6 +39,8 @@ class FileOps {
     write(folder, file, txt) {
         const ext = file.split('.').pop();
         if (!FileOps.READ_VALID.includes(ext))
+            return false;
+        if (FileOps.hasWhiteSpace(file))
             return false;
         const full = this.root + folder + file;
         fs.writeFileSync(full, txt, 'utf8');
@@ -162,6 +165,48 @@ class Srv {
     }
     apiSetup() {
         this.uploadSetup();
+        this.app.get('/api/write', function (req, res) {
+            let qs = req.query;
+            if (!Srv.checkSecret(qs, res))
+                return;
+            let keys = Object.keys(qs);
+            if (!keys.includes(Srv.folderProp)) {
+                Srv.ret(res, 'no folder');
+                return;
+            }
+            try {
+                const folder = qs[Srv.folderProp];
+                const fn = qs['fn'];
+                const fo = new FileOps(this.root);
+                let txt = req.body.toString();
+                logger.trace(txt);
+                let msg = fo.write(folder, fn, txt);
+                Srv.ret(res, msg);
+            }
+            catch (err) {
+                Srv.ret(res, err);
+            }
+        });
+        this.app.get('/api/read', function (req, res) {
+            let qs = req.query;
+            if (!Srv.checkSecret(qs, res))
+                return;
+            let keys = Object.keys(qs);
+            if (!keys.includes(Srv.folderProp)) {
+                Srv.ret(res, 'no folder');
+                return;
+            }
+            try {
+                const folder = qs[Srv.folderProp];
+                const fn = qs['fn'];
+                const fo = new FileOps(this.root);
+                let msg = fo.read(folder, fn);
+                Srv.ret(res, msg);
+            }
+            catch (err) {
+                Srv.ret(res, err);
+            }
+        });
         this.app.get('/api/list', function (req, res) {
             let qs = req.query;
             if (!Srv.checkSecret(qs, res))
@@ -229,6 +274,7 @@ class Srv {
         return this;
     }
     static() {
+        this.app.use(bodyParser);
         this.app.use(express.static(__dirname + '/www_admin'));
         this.app.listen(Srv.prop.port, function () {
             logger.trace('port ' + Srv.prop.port);

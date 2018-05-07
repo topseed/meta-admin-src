@@ -10,6 +10,7 @@ const os = require('os')
 const logger = require('tracer').console()
 const fse = require('fs-extra')
 const fs = require('fs')
+const bodyParser = require('body-parser')
 
 
 import { Meta, Dirs, Bake, Items, Tag, NBake } from 'nbake/lib/Base'
@@ -85,100 +86,23 @@ export class FileOps {
 
 }//FileOps
 
-export class Srv {
+class SrvUtil {
 	static bake //()
 	static itemize// ()
 	static prop //ROOT folder, yaml, etc.
 	static mount
-	app //express
+	static app //express
 
-	constructor(bake_, itemize_, prop_) {// functions to call
-		Srv.bake = bake_
-		Srv.itemize = itemize_
-		Srv.prop = prop_
-		Srv.mount = prop_.mount
+	static secretProp = 'secret'
+	static folderProp = 'folder'
 
-		this.app = express()
-		this.app.set('views', __dirname + '/admin_www')
-
-		//upload
-		this.app.get('/upload', function (req, res) {
-			res.render('upload')
-		})
-	}
+	static srcProp = 'src'
+	static destProp = 'dest'
 
 	static ret(res, msg) {
 		logger.trace(msg)
 		res.send(msg)
 	}
-
-	uploadSetup() {//upload
-		const secretProp = 'secret'
-		const folderProp = 'folder'
-		const SECRET = Srv.prop.secret
-
-		//form
-		this.app.post('/upload', function (req, res) {
-			logger.trace('upload')
-
-			const form = new formidable.IncomingForm()
-			form.keepExtensions = true
-			form.multiples = false
-
-			//start upload
-			form.parse(req, function(err, fields_, file__) {
-
-				let file = file__.file
-
-				if(err) {
-					logger.trace(err)
-					res.send( err )
-					Srv.removeFile(file)
-					return
-				}
-
-				let sec =fields_[secretProp]
-				if(sec!=SECRET) {
-					logger.trace('wrong secret')
-					res.status(422).send('wrong secret')
-					Srv.removeFile(file)
-					return
-				}
-
-				let fn = file.name
-				logger.trace(fn)
-
-				let folder = fields_[folderProp]
-				if(!folder || folder.length<2) {
-					logger.trace('no folder')
-					res.status(422).send('no folder')
-					Srv.removeFile(file)
-					return
-				}
-				folder = Srv.mount + folder +'/'
-
-				logger.trace(folder)
-
-				try {
-					fn = folder + fn
-					logger.trace(fn)
-					fse.moveSync(file.path, fn, { overwrite: true })
-				} catch(e) {
-					logger.trace(e)
-					res.status( 422 ).send( e )
-					return
-				}
-
-				logger.trace('done')
-
-				//done
-				res.status(200)
-				res.send( file.name)
-
-			})
-		})//post route
-
-	}//()
 
 	static removeFile(f) {
 		logger.trace('remove')
@@ -193,109 +117,231 @@ export class Srv {
 		try {
 			logger.trace(JSON.stringify(qs))
 			let keys = Object.keys( qs )
-			if(!keys.includes(Srv.secretProp)) {
-				Srv.ret(res, 'no secret')
+			if(!keys.includes(SrvUtil.secretProp)) {
+				SrvUtil.ret(res, 'no secret')
 				return false
 			}
 			let secret = qs.secret
-			if(secret != Srv.prop.secret) {
-				Srv.ret(res, 'wrong')
+			if(secret != SrvUtil.prop.secret) {
+				SrvUtil.ret(res, 'wrong')
 				return false
 			}
 			return true
 		} catch(e) {
 			logger.trace(e)
-			Srv.ret(res, e)
+			SrvUtil.ret(res, e)
 			return false
 		}
 	}//()
+}
 
-	static secretProp = 'secret'
-	static folderProp = 'folder'
+export class Srv {
 
-	static srcProp = 'src'
-	static destProp = 'dest'
+	constructor(bake_, itemize_, prop_) {// functions to call
+		SrvUtil.bake = bake_
+		SrvUtil.itemize = itemize_
+		SrvUtil.prop = prop_
+		SrvUtil.mount = prop_.mount
+
+		SrvUtil.app = express()
+		SrvUtil.app.set('views', __dirname + '/admin_www')
+
+		//upload
+		SrvUtil.app.get('/upload', function (req, res) {
+			res.render('upload')
+		})
+	}
+
+	uploadSetup() {//upload
+		const secretProp = 'secret'
+		const folderProp = 'folder'
+		const SECRET = SrvUtil.prop.secret
+
+		//form
+		SrvUtil.app.post('/upload', function (req, res) {
+			logger.trace('upload')
+			const form = new formidable.IncomingForm()
+			form.keepExtensions = true
+			form.multiples = false
+			form.parse(req, function(err, fields_, file__) {
+				let file = file__.file
+
+				if(err) {
+					logger.trace(err)
+					res.send( err )
+					SrvUtil.removeFile(file)
+					return
+				}
+
+				let sec =fields_[secretProp]
+				if(sec!=SECRET) {
+					logger.trace('wrong secret')
+					res.status(422).send('wrong secret')
+					SrvUtil.removeFile(file)
+					return
+				}
+
+				let fn = file.name
+				logger.trace(fn)
+				let folder = fields_[folderProp]
+				if(!folder || folder.length<2) {
+					logger.trace('no folder')
+					res.status(422).send('no folder')
+					SrvUtil.removeFile(file)
+					return
+				}
+				folder = SrvUtil.mount + folder +'/'
+				logger.trace(folder)
+
+				try {
+					fn = folder + fn
+					logger.trace(fn)
+					fse.moveSync(file.path, fn, { overwrite: true })
+				} catch(e) {
+					logger.trace(e)
+					res.status( 422 ).send( e )
+					return
+				}
+
+				logger.trace('done')
+				//done
+				res.status(200)
+				res.send( file.name)
+
+			})
+		})//post route
+
+	}//()
 
 	apiSetup() {//api
 		this.uploadSetup()
 
-		this.app.get('/api/list', function (req, res) {
+		SrvUtil.app.get('/api/write', function (req, res) {
 			let qs = req.query
-			if(!Srv.checkSecret(qs,res))
+			if(!SrvUtil.checkSecret(qs,res))
 				return;
 			let keys = Object.keys( qs )
-			if(!keys.includes(Srv.folderProp)) {
-				Srv.ret(res,'no folder')
+			if(!keys.includes(SrvUtil.folderProp)) {
+				SrvUtil.ret(res,'no folder')
 				return
 			}
 
 			try {
-				const folder = qs[Srv.folderProp]
+				const folder = qs[SrvUtil.folderProp]
+				const fn = qs['fn']
+				const fo = new FileOps(this.root)
+
+				let txt = req.body.toString()
+				logger.trace(txt)
+				let msg = fo.write(folder, fn, txt)
+
+				//autoBake
+
+				SrvUtil.ret(res, msg)
+			} catch(err) {
+				SrvUtil.ret(res, err)
+			}
+		})//
+
+		SrvUtil.app.get('/api/read', function (req, res) {
+			let qs = req.query
+			if(!SrvUtil.checkSecret(qs,res))
+				return;
+			let keys = Object.keys( qs )
+			if(!keys.includes(SrvUtil.folderProp)) {
+				SrvUtil.ret(res,'no folder')
+				return
+			}
+
+			try {
+				const folder = qs[SrvUtil.folderProp]
+				const fn = qs['fn']
+				const fo = new FileOps(this.root)
+				let msg = fo.read(folder, fn)
+				SrvUtil.ret(res, msg)
+			} catch(err) {
+				SrvUtil.ret(res, err)
+			}
+		})//
+
+		SrvUtil.app.get('/api/list', function (req, res) {
+			let qs = req.query
+			if(!SrvUtil.checkSecret(qs,res))
+				return;
+			let keys = Object.keys( qs )
+			if(!keys.includes(SrvUtil.folderProp)) {
+				SrvUtil.ret(res,'no folder')
+				return
+			}
+
+			try {
+				const folder = qs[SrvUtil.folderProp]
 				const fo = new FileOps(this.root)
 				let msg = fo.listFiles(folder)
-				Srv.ret(res, msg)
+				SrvUtil.ret(res, msg)
 			} catch(err) {
-				Srv.ret(res, err)
+				SrvUtil.ret(res, err)
 			}
 		})//
 
-		this.app.get('/api/items', function (req, res) {
+		SrvUtil.app.get('/api/items', function (req, res) {
 			let qs = req.query
-			if(!Srv.checkSecret(qs,res))
+			if(!SrvUtil.checkSecret(qs,res))
 				return;
 			let keys = Object.keys( qs )
-			if(!keys.includes(Srv.folderProp)) {
-				Srv.ret(res,'no folder')
+			if(!keys.includes(SrvUtil.folderProp)) {
+				SrvUtil.ret(res,'no folder')
 				return
 			}
 
 			try {
-				let msg = Srv.itemize(qs[Srv.folderProp])
-				Srv.ret(res, msg)
+				let msg = SrvUtil.itemize(qs[SrvUtil.folderProp])
+				SrvUtil.ret(res, msg)
 			} catch(err) {
-				Srv.ret(res, err)
+				SrvUtil.ret(res, err)
 			}
 		})//
 
-		this.app.get('/api/clone', function (req, res) {
+		SrvUtil.app.get('/api/clone', function (req, res) {
 			let qs = req.query
-			if(!Srv.checkSecret(qs,res))
+			if(!SrvUtil.checkSecret(qs,res))
 				return;
 			let keys = Object.keys( qs )
 
-			let src = qs[Srv.srcProp]
-			let dest = qs[Srv.destProp]
-			let f = new FileOps(Srv.prop.mount)
+			let src = qs[SrvUtil.srcProp]
+			let dest = qs[SrvUtil.destProp]
+			let f = new FileOps(SrvUtil.prop.mount)
 			let ret = f.clone(src,dest)
-			Srv.ret(res, ret)
+			SrvUtil.ret(res, ret)
 		})//
 
-		this.app.get('/api/bake', function (req, res) {
+		SrvUtil.app.get('/api/bake', function (req, res) {
 			let qs = req.query
-			if(!Srv.checkSecret(qs,res))
+			if(!SrvUtil.checkSecret(qs,res))
 				return;
 			let keys = Object.keys( qs )
-			if(!keys.includes(Srv.folderProp)) {
-				Srv.ret(res,'no folder')
+			if(!keys.includes(SrvUtil.folderProp)) {
+				SrvUtil.ret(res,'no folder')
 				return
 			}
 
 			try {
-				let msg = Srv.bake(qs[Srv.folderProp])
-				Srv.ret(res, msg)
+				let msg = SrvUtil.bake(qs[SrvUtil.folderProp])
+				SrvUtil.ret(res, msg)
 			} catch(err) {
-				Srv.ret(res, err)
+				SrvUtil.ret(res, err)
 			}
 		})//
 
 		return this
 	}//()
 
-	static() {
-		this.app.use(express.static(__dirname + '/www_admin'))
+	start() {
+		SrvUtil.app.use(bodyParser)
+		SrvUtil.app.use(express.static(__dirname + '/www_admin'))
 
-		this.app.listen(Srv.prop.port, function () {
-			logger.trace('port '+Srv.prop.port)
+		SrvUtil.app.listen(SrvUtil.prop.port, function () {
+			logger.trace('port '+SrvUtil.prop.port)
 		})
 
 	}//()

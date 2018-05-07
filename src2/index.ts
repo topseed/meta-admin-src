@@ -16,15 +16,16 @@ const yaml = require('js-yaml')
 let b = new NBake()
 console.log(b.ver())
 // /////////////////////////////////////////////////////////////////////////////////////
-
+/*
 const tst = 'Users/uptim/Documents/GitHub/meta-bake-src/src2/www_admin/edit/'
 const fo = new FileOps('/')
 
 //console.log(fo.listFiles(tst))
 
 console.log(fo.read(tst,'index2.html'))
+*/
 
-process.exit()
+//process.exit()
 
 function bake(dir) {
 	let folder = config.mount + '/' + dir
@@ -67,4 +68,4 @@ console.log(config)
 
 const srv = new Srv(bake, itemize, config)
 srv.apiSetup()
-srv.static()
+srv.start()
