@@ -38,6 +38,26 @@ export class FileOps {
 		return s.indexOf(' ') >= 0;
 	 }
 
+	static READ_VALID = ['pug','yaml','md', 'css', 'txt', 'json', 'html','js','ts']
+	 read(folder, file):string {
+		const ext = file.split('.').pop()
+		if(!FileOps.READ_VALID.includes(ext))
+			return 'other media'
+		const full = this.root+folder + file
+		const str:string = fs.readFileSync(full, 'utf8')
+		return str
+	}
+
+	write(folder, file, txt:string):boolean {
+		const ext = file.split('.').pop()
+		if(!FileOps.READ_VALID.includes(ext))
+			return false
+		const full = this.root+folder + file
+
+		fs.writeFileSync(full, txt, 'utf8')
+		return true
+	}
+
 	listFiles(folder):string {
 		const files = fs.readdirSync(this.root+folder)
 		let rows = []
@@ -56,7 +76,6 @@ export class FileOps {
 
 		return JSON.stringify(rows)
 	}//()
-
 
 }//FileOps
 
@@ -165,7 +184,6 @@ export class Srv {
 	}//()
 
 	static checkSecret(qs, res):boolean {
-		logger.trace('remove')
 		try {
 			logger.trace(JSON.stringify(qs))
 			let keys = Object.keys( qs )
@@ -206,7 +224,9 @@ export class Srv {
 			}
 
 			try {
-				let msg = Srv.itemize(qs[Srv.folderProp])
+				const folder = qs[Srv.folderProp]
+				const fo = new FileOps(this.root)
+				let msg = fo.listFiles(folder)
 				Srv.ret(res, msg)
 			} catch(err) {
 				Srv.ret(res, err)

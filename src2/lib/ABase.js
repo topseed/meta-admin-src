@@ -25,17 +25,23 @@ class FileOps {
     static hasWhiteSpace(s) {
         return s.indexOf(' ') >= 0;
     }
+    read(folder, file) {
+        return '';
+    }
+    write(folder, file, txt) {
+        return true;
+    }
     listFiles(folder) {
         const files = fs.readdirSync(this.root + folder);
         let rows = [];
         for (let i in files) {
             let f = files[i];
+            console.log(f.path);
             if (FileOps.hasWhiteSpace(f))
                 continue;
             let row = new Object();
             row['name'] = f;
             const full = this.root + folder + f;
-            console.log(full);
             const stats = fs.statSync(full);
             row['dir'] = stats.isDirectory();
             row['ext'] = f.split('.').pop();
@@ -122,7 +128,6 @@ class Srv {
         }
     }
     static checkSecret(qs, res) {
-        logger.trace('remove');
         try {
             logger.trace(JSON.stringify(qs));
             let keys = Object.keys(qs);
@@ -155,7 +160,9 @@ class Srv {
                 return;
             }
             try {
-                let msg = Srv.itemize(qs[Srv.folderProp]);
+                const folder = qs[Srv.folderProp];
+                const fo = new FileOps(this.root);
+                let msg = fo.listFiles(folder);
                 Srv.ret(res, msg);
             }
             catch (err) {

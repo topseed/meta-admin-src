@@ -17,6 +17,13 @@ let b = new NBake()
 console.log(b.ver())
 // /////////////////////////////////////////////////////////////////////////////////////
 
+const tst = 'Users/uptim/Documents/GitHub/meta-bake-src/src2/www_admin/edit/'
+const fo = new FileOps('/')
+
+//console.log(fo.listFiles(tst))
+
+console.log(fo.read(tst,'index.html'))
+
 //process.exit()
 
 function bake(dir) {

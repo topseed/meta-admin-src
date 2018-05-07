@@ -9,9 +9,9 @@ const logger = require('tracer').console();
 const yaml = require('js-yaml');
 let b = new Base_1.NBake();
 console.log(b.ver());
-const FO = new ABase_1.FileOps('/');
-console.log(FO.listFiles('Users/uptim/Documents/GitHub/meta-bake-src/src2/www_admin/edit/'));
-process.exit();
+const tst = 'Users/uptim/Documents/GitHub/meta-bake-src/src2/www_admin/edit/';
+const fo = new ABase_1.FileOps('/');
+console.log(fo.listFiles(tst));
 function bake(dir) {
     let folder = config.mount + '/' + dir;
     const start = new Date();
