@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Base_1 = require("nbake/lib/Base");
-const ABase_1 = require("./ABase");
+const ABase_1 = require("./lib/ABase");
 const os = require('os');
 const fs = require('fs');
 const download = require('image-downloader');
@@ -9,6 +9,9 @@ const logger = require('tracer').console();
 const yaml = require('js-yaml');
 let b = new Base_1.NBake();
 console.log(b.ver());
+const FO = new ABase_1.FileOps('/');
+console.log(FO.listFiles('Users/uptim/Documents/GitHub/meta-bake-src/src2/www_admin/edit/'));
+process.exit();
 function bake(dir) {
     let folder = config.mount + '/' + dir;
     const start = new Date();
@@ -41,5 +44,5 @@ console.log(arg);
 let config = yaml.load(fs.readFileSync(arg));
 console.log(config);
 const srv = new ABase_1.Srv(bake, itemize, config);
-srv.s();
-srv.start();
+srv.apiSetup();
+srv.static();

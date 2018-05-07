@@ -9,8 +9,11 @@ const formidable = require('formidable')
 const os = require('os')
 const logger = require('tracer').console()
 const fse = require('fs-extra')
+const fs = require('fs')
+
 
 import { Meta, Dirs, Bake, Items, Tag, NBake } from 'nbake/lib/Base'
+import { objectTypeAnnotation } from 'babel-types';
 
 export class MetaAdmin {
 	ver() {
@@ -24,12 +27,37 @@ export class FileOps {
 		this.root = root_
 	}
 
-	clone(src,dest):string {
+	clone(src, dest):string {
 		logger.trace('copy?')
 		fse.copySync(this.root+'/'+src, this.root+'/'+dest)
 		logger.trace('copy!')
 		return 'ok'
 	}//()
+
+	static hasWhiteSpace(s) {
+		return s.indexOf(' ') >= 0;
+	 }
+
+	listFiles(folder):string {
+		const files = fs.readdirSync(this.root+folder)
+		let rows = []
+		for (let i in files) {
+			let f:string = files[i]
+			if(FileOps.hasWhiteSpace(f))
+				continue
+			let row = new Object()
+			row['name'] = f
+			const full = this.root+folder + f
+			const stats = fs.statSync(full)
+			row['dir']= stats.isDirectory()
+			row['ext']= f.split('.').pop()
+			rows.push(row)
+		}// outer
+
+		return JSON.stringify(rows)
+	}//()
+
+
 }//FileOps
 
 export class Srv {
@@ -146,7 +174,7 @@ export class Srv {
 				return false
 			}
 			let secret = qs.secret
-			if(secret != Srv.SECRET) {
+			if(secret != Srv.prop.secret) {
 				Srv.ret(res, 'wrong')
 				return false
 			}
@@ -160,7 +188,6 @@ export class Srv {
 
 	static secretProp = 'secret'
 	static folderProp = 'folder'
-	static SECRET = Srv.prop.secret
 
 	static srcProp = 'src'
 	static destProp = 'dest'

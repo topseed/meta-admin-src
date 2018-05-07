@@ -3,11 +3,10 @@
 	"version": "3.05.06",
 	"description": "meta nbake admin",
 	"main": "index.js",
-
 	"license": "APACHE2",
 	"author": "http://github.com/topseed",
 	"bugs": "http://github.com/topseed",
-	"homepage":"http://github.com/topseed",
+	"homepage": "http://github.com/topseed",
 	"repository": {
 		"type": "git",
 		"url": "http://github.com/topseed"

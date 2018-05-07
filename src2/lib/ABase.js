@@ -5,6 +5,13 @@ const formidable = require('formidable');
 const os = require('os');
 const logger = require('tracer').console();
 const fse = require('fs-extra');
+const fs = require('fs');
+class MetaAdmin {
+    ver() {
+        return "v3.05.06";
+    }
+}
+exports.MetaAdmin = MetaAdmin;
 class FileOps {
     constructor(root_) {
         this.root = root_;
@@ -14,6 +21,27 @@ class FileOps {
         fse.copySync(this.root + '/' + src, this.root + '/' + dest);
         logger.trace('copy!');
         return 'ok';
+    }
+    static hasWhiteSpace(s) {
+        return s.indexOf(' ') >= 0;
+    }
+    listFiles(folder) {
+        const files = fs.readdirSync(this.root + folder);
+        let rows = [];
+        for (let i in files) {
+            let f = files[i];
+            if (FileOps.hasWhiteSpace(f))
+                continue;
+            let row = new Object();
+            row['name'] = f;
+            const full = this.root + folder + f;
+            console.log(full);
+            const stats = fs.statSync(full);
+            row['dir'] = stats.isDirectory();
+            row['ext'] = f.split('.').pop();
+            rows.push(row);
+        }
+        return JSON.stringify(rows);
     }
 }
 exports.FileOps = FileOps;
@@ -33,7 +61,7 @@ class Srv {
         logger.trace(msg);
         res.send(msg);
     }
-    u() {
+    uploadSetup() {
         const secretProp = 'secret';
         const folderProp = 'folder';
         const SECRET = Srv.prop.secret;
@@ -93,72 +121,86 @@ class Srv {
             logger.trace(e);
         }
     }
-    s() {
-        this.u();
-        const secretProp = 'secret';
-        const folderProp = 'folder';
-        const SECRET = Srv.prop.secret;
-        const srcProp = 'src';
-        const destProp = 'dest';
-        this.app.get('/items', function (req, res) {
-            let qs = req.query;
-            let keys = Object.keys(qs);
+    static checkSecret(qs, res) {
+        logger.trace('remove');
+        try {
             logger.trace(JSON.stringify(qs));
-            if (!keys.includes(secretProp)) {
+            let keys = Object.keys(qs);
+            if (!keys.includes(Srv.secretProp)) {
                 Srv.ret(res, 'no secret');
-                return;
+                return false;
             }
             let secret = qs.secret;
-            if (secret != SECRET) {
+            if (secret != Srv.prop.secret) {
                 Srv.ret(res, 'wrong');
+                return false;
+            }
+            return true;
+        }
+        catch (e) {
+            logger.trace(e);
+            Srv.ret(res, e);
+            return false;
+        }
+    }
+    apiSetup() {
+        this.uploadSetup();
+        this.app.get('/api/list', function (req, res) {
+            let qs = req.query;
+            if (!Srv.checkSecret(qs, res))
+                return;
+            let keys = Object.keys(qs);
+            if (!keys.includes(Srv.folderProp)) {
+                Srv.ret(res, 'no folder');
                 return;
             }
             try {
-                let msg = Srv.itemize(qs[folderProp]);
+                let msg = Srv.itemize(qs[Srv.folderProp]);
                 Srv.ret(res, msg);
             }
             catch (err) {
                 Srv.ret(res, err);
             }
         });
-        this.app.get('/clone', function (req, res) {
+        this.app.get('/api/items', function (req, res) {
             let qs = req.query;
+            if (!Srv.checkSecret(qs, res))
+                return;
             let keys = Object.keys(qs);
-            logger.trace(JSON.stringify(qs));
-            if (!keys.includes(secretProp)) {
-                Srv.ret(res, 'no secret');
-                return;
-            }
-            let secret = qs.secret;
-            if (secret != SECRET) {
-                Srv.ret(res, 'wrong');
-                return;
-            }
-            let src = qs[srcProp];
-            let dest = qs[destProp];
-            let f = new FileOps(Srv.prop.mount);
-            let ret = f.clone(src, dest);
-            Srv.ret(res, ret);
-        });
-        this.app.get('/bake', function (req, res) {
-            let qs = req.query;
-            let keys = Object.keys(qs);
-            logger.trace(JSON.stringify(qs));
-            if (!keys.includes(secretProp)) {
-                Srv.ret(res, 'no secret');
-                return;
-            }
-            let secret = qs.secret;
-            if (secret != SECRET) {
-                Srv.ret(res, 'wrong');
-                return;
-            }
-            if (!keys.includes(folderProp)) {
+            if (!keys.includes(Srv.folderProp)) {
                 Srv.ret(res, 'no folder');
                 return;
             }
             try {
-                let msg = Srv.bake(qs[folderProp]);
+                let msg = Srv.itemize(qs[Srv.folderProp]);
+                Srv.ret(res, msg);
+            }
+            catch (err) {
+                Srv.ret(res, err);
+            }
+        });
+        this.app.get('/api/clone', function (req, res) {
+            let qs = req.query;
+            if (!Srv.checkSecret(qs, res))
+                return;
+            let keys = Object.keys(qs);
+            let src = qs[Srv.srcProp];
+            let dest = qs[Srv.destProp];
+            let f = new FileOps(Srv.prop.mount);
+            let ret = f.clone(src, dest);
+            Srv.ret(res, ret);
+        });
+        this.app.get('/api/bake', function (req, res) {
+            let qs = req.query;
+            if (!Srv.checkSecret(qs, res))
+                return;
+            let keys = Object.keys(qs);
+            if (!keys.includes(Srv.folderProp)) {
+                Srv.ret(res, 'no folder');
+                return;
+            }
+            try {
+                let msg = Srv.bake(qs[Srv.folderProp]);
                 Srv.ret(res, msg);
             }
             catch (err) {
@@ -167,14 +209,18 @@ class Srv {
         });
         return this;
     }
-    start() {
+    static() {
         this.app.use(express.static(__dirname + '/www_admin'));
         this.app.listen(Srv.prop.port, function () {
             logger.trace('port ' + Srv.prop.port);
         });
     }
 }
+Srv.secretProp = 'secret';
+Srv.folderProp = 'folder';
+Srv.srcProp = 'src';
+Srv.destProp = 'dest';
 exports.Srv = Srv;
 module.exports = {
-    Srv, FileOps
+    Srv, FileOps, MetaAdmin
 };
