@@ -39,11 +39,15 @@ export class FileOps {
 	 }
 
 	static READ_VALID = ['pug','yaml','md', 'css', 'txt', 'json', 'html','js','ts']
-	 read(folder, file):string {
+
+	read(folder, file):string {
 		const ext = file.split('.').pop()
 		if(!FileOps.READ_VALID.includes(ext))
 			return 'other media'
 		const full = this.root+folder + file
+		if (!fs.existsSync(full))
+			return file + ' does not exists'
+
 		const str:string = fs.readFileSync(full, 'utf8')
 		return str
 	}
@@ -51,6 +55,8 @@ export class FileOps {
 	write(folder, file, txt:string):boolean {
 		const ext = file.split('.').pop()
 		if(!FileOps.READ_VALID.includes(ext))
+			return false
+		if(FileOps.hasWhiteSpace(file))
 			return false
 		const full = this.root+folder + file
 

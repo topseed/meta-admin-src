@@ -22,9 +22,9 @@ const fo = new FileOps('/')
 
 //console.log(fo.listFiles(tst))
 
-console.log(fo.read(tst,'index.html'))
+console.log(fo.read(tst,'index2.html'))
 
-//process.exit()
+process.exit()
 
 function bake(dir) {
 	let folder = config.mount + '/' + dir

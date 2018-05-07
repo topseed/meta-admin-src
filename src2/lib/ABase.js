@@ -26,9 +26,21 @@ class FileOps {
         return s.indexOf(' ') >= 0;
     }
     read(folder, file) {
-        return '';
+        const ext = file.split('.').pop();
+        if (!FileOps.READ_VALID.includes(ext))
+            return 'other media';
+        const full = this.root + folder + file;
+        if (!fs.existsSync(full))
+            return file + ' does not exists';
+        const str = fs.readFileSync(full, 'utf8');
+        return str;
     }
     write(folder, file, txt) {
+        const ext = file.split('.').pop();
+        if (!FileOps.READ_VALID.includes(ext))
+            return false;
+        const full = this.root + folder + file;
+        fs.writeFileSync(full, txt, 'utf8');
         return true;
     }
     listFiles(folder) {
@@ -36,7 +48,6 @@ class FileOps {
         let rows = [];
         for (let i in files) {
             let f = files[i];
-            console.log(f.path);
             if (FileOps.hasWhiteSpace(f))
                 continue;
             let row = new Object();
@@ -50,6 +61,7 @@ class FileOps {
         return JSON.stringify(rows);
     }
 }
+FileOps.READ_VALID = ['pug', 'yaml', 'md', 'css', 'txt', 'json', 'html', 'js', 'ts'];
 exports.FileOps = FileOps;
 class Srv {
     constructor(bake_, itemize_, prop_) {
