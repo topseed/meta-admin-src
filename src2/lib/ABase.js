@@ -57,12 +57,12 @@ class FileOps {
                 let f = files[i];
                 if (FileOps.hasWhiteSpace(f))
                     continue;
-                let row = new Object();
-                row['name'] = f;
+                let row = [];
+                row.push(f);
                 const full = this.root + folder + '/' + f;
                 const stats = fs.statSync(full);
-                row['dir'] = stats.isDirectory();
-                row['ext'] = f.split('.').pop();
+                row.push(f.split('.').pop());
+                row.push(stats.isDirectory());
                 rows.push(row);
             }
             return JSON.stringify(rows);

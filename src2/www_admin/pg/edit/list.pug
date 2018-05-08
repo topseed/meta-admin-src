@@ -4,7 +4,7 @@ table#list1.display(width='95%')
 
 script.
 	loadjs.ready('core', function () {
-		callList1('123', 'edit')
+		callList1('123', 'pg/edit')
 	})//ready
 
 	function callList1(sec, folder_) {
@@ -20,8 +20,10 @@ script.
 				return resp.json()
 			}).then(function(ret) {
 				console.log(ret)
-				loadjs.ready(['dwjs'], function () {
-
+				loadjs.ready(['dw'], function () {
+					 datatable.clear()
+					 datatable.rows.add(ret)
+					 datatable.draw()
 				})//ready
 			}).catch(function(err) {
 				console.log('error', err)
