@@ -42,4 +42,4 @@ let config = yaml.load(fs.readFileSync(arg));
 console.log(config);
 const srv = new ABase_1.Srv(bake, itemize, config);
 srv.apiSetup();
-srv.static();
+srv.start();

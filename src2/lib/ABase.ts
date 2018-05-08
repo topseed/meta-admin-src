@@ -18,7 +18,7 @@ import { objectTypeAnnotation } from 'babel-types';
 
 export class MetaAdmin {
 	ver() {
-		return "v3.05.06"
+		return "v3.05.11"
 	}
 }
 
@@ -99,6 +99,7 @@ class SrvUtil {
 	static srcProp = 'src'
 	static destProp = 'dest'
 
+	static WWW
 	static ret(res, msg) {
 		logger.trace(msg)
 		res.send(msg)
@@ -144,7 +145,9 @@ export class Srv {
 		SrvUtil.mount = prop_.mount
 
 		SrvUtil.app = express()
-		SrvUtil.app.set('views', __dirname + '/admin_www')
+		SrvUtil.WWW = prop_.srv_www
+		logger.trace(SrvUtil.WWW)
+		SrvUtil.app.set('views', SrvUtil.WWW)
 
 		//upload
 		SrvUtil.app.get('/upload', function (req, res) {
@@ -337,8 +340,8 @@ export class Srv {
 	}//()
 
 	start() {
-		SrvUtil.app.use(bodyParser)
-		SrvUtil.app.use(express.static(__dirname + '/www_admin'))
+		SrvUtil.app.use(bodyParser.text())
+		SrvUtil.app.use(express.static(SrvUtil.WWW))
 
 		SrvUtil.app.listen(SrvUtil.prop.port, function () {
 			logger.trace('port '+SrvUtil.prop.port)

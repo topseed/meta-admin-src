@@ -9,7 +9,7 @@ const fs = require('fs');
 const bodyParser = require('body-parser');
 class MetaAdmin {
     ver() {
-        return "v3.05.06";
+        return "v3.05.11";
     }
 }
 exports.MetaAdmin = MetaAdmin;
@@ -66,27 +66,65 @@ class FileOps {
 }
 FileOps.READ_VALID = ['pug', 'yaml', 'md', 'css', 'txt', 'json', 'html', 'js', 'ts'];
 exports.FileOps = FileOps;
-class Srv {
-    constructor(bake_, itemize_, prop_) {
-        Srv.bake = bake_;
-        Srv.itemize = itemize_;
-        Srv.prop = prop_;
-        Srv.mount = prop_.mount;
-        this.app = express();
-        this.app.set('views', __dirname + '/admin_www');
-        this.app.get('/upload', function (req, res) {
-            res.render('upload');
-        });
-    }
+class SrvUtil {
     static ret(res, msg) {
         logger.trace(msg);
         res.send(msg);
     }
+    static removeFile(f) {
+        logger.trace('remove');
+        try {
+            fse.removeSync(f.path);
+        }
+        catch (e) {
+            logger.trace(e);
+        }
+    }
+    static checkSecret(qs, res) {
+        try {
+            logger.trace(JSON.stringify(qs));
+            let keys = Object.keys(qs);
+            if (!keys.includes(SrvUtil.secretProp)) {
+                SrvUtil.ret(res, 'no secret');
+                return false;
+            }
+            let secret = qs.secret;
+            if (secret != SrvUtil.prop.secret) {
+                SrvUtil.ret(res, 'wrong');
+                return false;
+            }
+            return true;
+        }
+        catch (e) {
+            logger.trace(e);
+            SrvUtil.ret(res, e);
+            return false;
+        }
+    }
+}
+SrvUtil.secretProp = 'secret';
+SrvUtil.folderProp = 'folder';
+SrvUtil.srcProp = 'src';
+SrvUtil.destProp = 'dest';
+class Srv {
+    constructor(bake_, itemize_, prop_) {
+        SrvUtil.bake = bake_;
+        SrvUtil.itemize = itemize_;
+        SrvUtil.prop = prop_;
+        SrvUtil.mount = prop_.mount;
+        SrvUtil.app = express();
+        SrvUtil.WWW = prop_.srv_www;
+        logger.trace(SrvUtil.WWW);
+        SrvUtil.app.set('views', SrvUtil.WWW);
+        SrvUtil.app.get('/upload', function (req, res) {
+            res.render('upload');
+        });
+    }
     uploadSetup() {
         const secretProp = 'secret';
         const folderProp = 'folder';
-        const SECRET = Srv.prop.secret;
-        this.app.post('/upload', function (req, res) {
+        const SECRET = SrvUtil.prop.secret;
+        SrvUtil.app.post('/upload', function (req, res) {
             logger.trace('upload');
             const form = new formidable.IncomingForm();
             form.keepExtensions = true;
@@ -96,14 +134,14 @@ class Srv {
                 if (err) {
                     logger.trace(err);
                     res.send(err);
-                    Srv.removeFile(file);
+                    SrvUtil.removeFile(file);
                     return;
                 }
                 let sec = fields_[secretProp];
                 if (sec != SECRET) {
                     logger.trace('wrong secret');
                     res.status(422).send('wrong secret');
-                    Srv.removeFile(file);
+                    SrvUtil.removeFile(file);
                     return;
                 }
                 let fn = file.name;
@@ -112,10 +150,10 @@ class Srv {
                 if (!folder || folder.length < 2) {
                     logger.trace('no folder');
                     res.status(422).send('no folder');
-                    Srv.removeFile(file);
+                    SrvUtil.removeFile(file);
                     return;
                 }
-                folder = Srv.mount + folder + '/';
+                folder = SrvUtil.mount + folder + '/';
                 logger.trace(folder);
                 try {
                     fn = folder + fn;
@@ -133,158 +171,124 @@ class Srv {
             });
         });
     }
-    static removeFile(f) {
-        logger.trace('remove');
-        try {
-            fse.removeSync(f.path);
-        }
-        catch (e) {
-            logger.trace(e);
-        }
-    }
-    static checkSecret(qs, res) {
-        try {
-            logger.trace(JSON.stringify(qs));
-            let keys = Object.keys(qs);
-            if (!keys.includes(Srv.secretProp)) {
-                Srv.ret(res, 'no secret');
-                return false;
-            }
-            let secret = qs.secret;
-            if (secret != Srv.prop.secret) {
-                Srv.ret(res, 'wrong');
-                return false;
-            }
-            return true;
-        }
-        catch (e) {
-            logger.trace(e);
-            Srv.ret(res, e);
-            return false;
-        }
-    }
     apiSetup() {
         this.uploadSetup();
-        this.app.get('/api/write', function (req, res) {
+        SrvUtil.app.get('/api/write', function (req, res) {
             let qs = req.query;
-            if (!Srv.checkSecret(qs, res))
+            if (!SrvUtil.checkSecret(qs, res))
                 return;
             let keys = Object.keys(qs);
-            if (!keys.includes(Srv.folderProp)) {
-                Srv.ret(res, 'no folder');
+            if (!keys.includes(SrvUtil.folderProp)) {
+                SrvUtil.ret(res, 'no folder');
                 return;
             }
             try {
-                const folder = qs[Srv.folderProp];
+                const folder = qs[SrvUtil.folderProp];
                 const fn = qs['fn'];
                 const fo = new FileOps(this.root);
                 let txt = req.body.toString();
                 logger.trace(txt);
                 let msg = fo.write(folder, fn, txt);
-                Srv.ret(res, msg);
+                SrvUtil.ret(res, msg);
             }
             catch (err) {
-                Srv.ret(res, err);
+                SrvUtil.ret(res, err);
             }
         });
-        this.app.get('/api/read', function (req, res) {
+        SrvUtil.app.get('/api/read', function (req, res) {
             let qs = req.query;
-            if (!Srv.checkSecret(qs, res))
+            if (!SrvUtil.checkSecret(qs, res))
                 return;
             let keys = Object.keys(qs);
-            if (!keys.includes(Srv.folderProp)) {
-                Srv.ret(res, 'no folder');
+            if (!keys.includes(SrvUtil.folderProp)) {
+                SrvUtil.ret(res, 'no folder');
                 return;
             }
             try {
-                const folder = qs[Srv.folderProp];
+                const folder = qs[SrvUtil.folderProp];
                 const fn = qs['fn'];
                 const fo = new FileOps(this.root);
                 let msg = fo.read(folder, fn);
-                Srv.ret(res, msg);
+                SrvUtil.ret(res, msg);
             }
             catch (err) {
-                Srv.ret(res, err);
+                SrvUtil.ret(res, err);
             }
         });
-        this.app.get('/api/list', function (req, res) {
+        SrvUtil.app.get('/api/list', function (req, res) {
             let qs = req.query;
-            if (!Srv.checkSecret(qs, res))
+            if (!SrvUtil.checkSecret(qs, res))
                 return;
             let keys = Object.keys(qs);
-            if (!keys.includes(Srv.folderProp)) {
-                Srv.ret(res, 'no folder');
+            if (!keys.includes(SrvUtil.folderProp)) {
+                SrvUtil.ret(res, 'no folder');
                 return;
             }
             try {
-                const folder = qs[Srv.folderProp];
+                const folder = qs[SrvUtil.folderProp];
                 const fo = new FileOps(this.root);
                 let msg = fo.listFiles(folder);
-                Srv.ret(res, msg);
+                SrvUtil.ret(res, msg);
             }
             catch (err) {
-                Srv.ret(res, err);
+                SrvUtil.ret(res, err);
             }
         });
-        this.app.get('/api/items', function (req, res) {
+        SrvUtil.app.get('/api/items', function (req, res) {
             let qs = req.query;
-            if (!Srv.checkSecret(qs, res))
+            if (!SrvUtil.checkSecret(qs, res))
                 return;
             let keys = Object.keys(qs);
-            if (!keys.includes(Srv.folderProp)) {
-                Srv.ret(res, 'no folder');
+            if (!keys.includes(SrvUtil.folderProp)) {
+                SrvUtil.ret(res, 'no folder');
                 return;
             }
             try {
-                let msg = Srv.itemize(qs[Srv.folderProp]);
-                Srv.ret(res, msg);
+                let msg = SrvUtil.itemize(qs[SrvUtil.folderProp]);
+                SrvUtil.ret(res, msg);
             }
             catch (err) {
-                Srv.ret(res, err);
+                SrvUtil.ret(res, err);
             }
         });
-        this.app.get('/api/clone', function (req, res) {
+        SrvUtil.app.get('/api/clone', function (req, res) {
             let qs = req.query;
-            if (!Srv.checkSecret(qs, res))
+            if (!SrvUtil.checkSecret(qs, res))
                 return;
             let keys = Object.keys(qs);
-            let src = qs[Srv.srcProp];
-            let dest = qs[Srv.destProp];
-            let f = new FileOps(Srv.prop.mount);
+            let src = qs[SrvUtil.srcProp];
+            let dest = qs[SrvUtil.destProp];
+            let f = new FileOps(SrvUtil.prop.mount);
             let ret = f.clone(src, dest);
-            Srv.ret(res, ret);
+            SrvUtil.ret(res, ret);
         });
-        this.app.get('/api/bake', function (req, res) {
+        SrvUtil.app.get('/api/bake', function (req, res) {
             let qs = req.query;
-            if (!Srv.checkSecret(qs, res))
+            if (!SrvUtil.checkSecret(qs, res))
                 return;
             let keys = Object.keys(qs);
-            if (!keys.includes(Srv.folderProp)) {
-                Srv.ret(res, 'no folder');
+            if (!keys.includes(SrvUtil.folderProp)) {
+                SrvUtil.ret(res, 'no folder');
                 return;
             }
             try {
-                let msg = Srv.bake(qs[Srv.folderProp]);
-                Srv.ret(res, msg);
+                let msg = SrvUtil.bake(qs[SrvUtil.folderProp]);
+                SrvUtil.ret(res, msg);
             }
             catch (err) {
-                Srv.ret(res, err);
+                SrvUtil.ret(res, err);
             }
         });
         return this;
     }
-    static() {
-        this.app.use(bodyParser);
-        this.app.use(express.static(__dirname + '/www_admin'));
-        this.app.listen(Srv.prop.port, function () {
-            logger.trace('port ' + Srv.prop.port);
+    start() {
+        SrvUtil.app.use(bodyParser.text());
+        SrvUtil.app.use(express.static(SrvUtil.WWW));
+        SrvUtil.app.listen(SrvUtil.prop.port, function () {
+            logger.trace('port ' + SrvUtil.prop.port);
         });
     }
 }
-Srv.secretProp = 'secret';
-Srv.folderProp = 'folder';
-Srv.srcProp = 'src';
-Srv.destProp = 'dest';
 exports.Srv = Srv;
 module.exports = {
     Srv, FileOps, MetaAdmin

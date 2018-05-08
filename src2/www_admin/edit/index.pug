@@ -12,6 +12,31 @@ block main
 	p
 	input#page1(type='text', name='page', placeholder='blog')
 	p
+	input(type='text', name='secret', placeholder='123')
+	p
+	script.
+		loadjs.ready('core', function () {
+			callList1()
+		})//ready
+
+		function callList1(sec, folder_) {
+			console.log('calling list')
+
+			let url = '/api/list?secret='
+			let folder = '&folder='
+			url = url + '123' + folder + folder_
+			console.log(url)
+
+			fetch(url)
+				.then(function(resp) {
+					return resp.json()
+				}).then(function(obj) {
+					console.log(obj)
+				}).catch(function(err) {
+					console.log('error',err)
+			})//fetch
+		}//call()
+
 	div.splitCont
 		#left.split.split-horizontal
 			p o hi2
