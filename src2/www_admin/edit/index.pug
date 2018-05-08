@@ -16,7 +16,7 @@ block main
 	p
 	script.
 		loadjs.ready('core', function () {
-			callList1()
+			callList1('123', 'edit2')
 		})//ready
 
 		function callList1(sec, folder_) {
@@ -24,7 +24,7 @@ block main
 
 			let url = '/api/list?secret='
 			let folder = '&folder='
-			url = url + '123' + folder + folder_
+			url = url + sec + folder + folder_
 			console.log(url)
 
 			fetch(url)

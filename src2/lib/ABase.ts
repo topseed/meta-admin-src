@@ -42,6 +42,7 @@ export class FileOps {
 	static READ_VALID = ['pug','yaml','md', 'css', 'txt', 'json', 'html','js','ts']
 
 	read(folder, file):string {
+		const files = fs.readdirSync(this.root+folder)
 		const ext = file.split('.').pop()
 		if(!FileOps.READ_VALID.includes(ext))
 			return 'other media'
@@ -54,6 +55,7 @@ export class FileOps {
 	}
 
 	write(folder, file, txt:string):boolean {
+		const files = fs.readdirSync(this.root+folder)
 		const ext = file.split('.').pop()
 		if(!FileOps.READ_VALID.includes(ext))
 			return false
@@ -66,22 +68,28 @@ export class FileOps {
 	}
 
 	listFiles(folder):string {
-		const files = fs.readdirSync(this.root+folder)
-		let rows = []
-		for (let i in files) {
-			let f:string = files[i]
-			if(FileOps.hasWhiteSpace(f))
-				continue
-			let row = new Object()
-			row['name'] = f
-			const full = this.root+folder + f
-			const stats = fs.statSync(full)
-			row['dir']= stats.isDirectory()
-			row['ext']= f.split('.').pop()
-			rows.push(row)
-		}// outer
+		logger.trace(this.root+folder)
+		try {
+			const files = fs.readdirSync(this.root+folder)
+			let rows = []
+			for (let i in files) {
+				let f:string = files[i]
+				if(FileOps.hasWhiteSpace(f))
+					continue
+				let row = new Object()
+				row['name'] = f
+				const full = this.root+folder +'/'+ f
+				const stats = fs.statSync(full)
+				row['dir']= stats.isDirectory()
+				row['ext']= f.split('.').pop()
+				rows.push(row)
+			}// outer
 
-		return JSON.stringify(rows)
+			return JSON.stringify(rows)
+		} catch (err) {
+			logger.warn(err)
+			return JSON.stringify({'error':'bad folder'})
+		}
 	}//()
 
 }//FileOps
@@ -230,9 +238,9 @@ export class Srv {
 			}
 
 			try {
-				const folder = qs[SrvUtil.folderProp]
+				let folder = qs[SrvUtil.folderProp]
 				const fn = qs['fn']
-				const fo = new FileOps(this.root)
+				const fo = new FileOps(SrvUtil.mount)
 
 				let txt = req.body.toString()
 				logger.trace(txt)
@@ -257,9 +265,10 @@ export class Srv {
 			}
 
 			try {
-				const folder = qs[SrvUtil.folderProp]
+				let folder = qs[SrvUtil.folderProp]
 				const fn = qs['fn']
-				const fo = new FileOps(this.root)
+				const fo = new FileOps(SrvUtil.mount)
+
 				let msg = fo.read(folder, fn)
 				SrvUtil.ret(res, msg)
 			} catch(err) {
@@ -278,8 +287,9 @@ export class Srv {
 			}
 
 			try {
-				const folder = qs[SrvUtil.folderProp]
-				const fo = new FileOps(this.root)
+				let folder = qs[SrvUtil.folderProp]
+				const fo = new FileOps(SrvUtil.mount)
+
 				let msg = fo.listFiles(folder)
 				SrvUtil.ret(res, msg)
 			} catch(err) {

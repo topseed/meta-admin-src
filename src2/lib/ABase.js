@@ -27,6 +27,7 @@ class FileOps {
         return s.indexOf(' ') >= 0;
     }
     read(folder, file) {
+        const files = fs.readdirSync(this.root + folder);
         const ext = file.split('.').pop();
         if (!FileOps.READ_VALID.includes(ext))
             return 'other media';
@@ -37,6 +38,7 @@ class FileOps {
         return str;
     }
     write(folder, file, txt) {
+        const files = fs.readdirSync(this.root + folder);
         const ext = file.split('.').pop();
         if (!FileOps.READ_VALID.includes(ext))
             return false;
@@ -47,21 +49,27 @@ class FileOps {
         return true;
     }
     listFiles(folder) {
-        const files = fs.readdirSync(this.root + folder);
-        let rows = [];
-        for (let i in files) {
-            let f = files[i];
-            if (FileOps.hasWhiteSpace(f))
-                continue;
-            let row = new Object();
-            row['name'] = f;
-            const full = this.root + folder + f;
-            const stats = fs.statSync(full);
-            row['dir'] = stats.isDirectory();
-            row['ext'] = f.split('.').pop();
-            rows.push(row);
+        logger.trace(this.root + folder);
+        try {
+            const files = fs.readdirSync(this.root + folder);
+            let rows = [];
+            for (let i in files) {
+                let f = files[i];
+                if (FileOps.hasWhiteSpace(f))
+                    continue;
+                let row = new Object();
+                row['name'] = f;
+                const full = this.root + folder + '/' + f;
+                const stats = fs.statSync(full);
+                row['dir'] = stats.isDirectory();
+                row['ext'] = f.split('.').pop();
+                rows.push(row);
+            }
+            return JSON.stringify(rows);
         }
-        return JSON.stringify(rows);
+        catch (err) {
+            logger.warn(err);
+        }
     }
 }
 FileOps.READ_VALID = ['pug', 'yaml', 'md', 'css', 'txt', 'json', 'html', 'js', 'ts'];
@@ -183,9 +191,9 @@ class Srv {
                 return;
             }
             try {
-                const folder = qs[SrvUtil.folderProp];
+                let folder = qs[SrvUtil.folderProp];
                 const fn = qs['fn'];
-                const fo = new FileOps(this.root);
+                const fo = new FileOps(SrvUtil.mount);
                 let txt = req.body.toString();
                 logger.trace(txt);
                 let msg = fo.write(folder, fn, txt);
@@ -205,9 +213,9 @@ class Srv {
                 return;
             }
             try {
-                const folder = qs[SrvUtil.folderProp];
+                let folder = qs[SrvUtil.folderProp];
                 const fn = qs['fn'];
-                const fo = new FileOps(this.root);
+                const fo = new FileOps(SrvUtil.mount);
                 let msg = fo.read(folder, fn);
                 SrvUtil.ret(res, msg);
             }
@@ -225,8 +233,8 @@ class Srv {
                 return;
             }
             try {
-                const folder = qs[SrvUtil.folderProp];
-                const fo = new FileOps(this.root);
+                let folder = qs[SrvUtil.folderProp];
+                const fo = new FileOps(SrvUtil.mount);
                 let msg = fo.listFiles(folder);
                 SrvUtil.ret(res, msg);
             }
