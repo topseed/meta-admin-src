@@ -43,9 +43,10 @@ script.
 
 			$('#list1').DataTable( {
 				//scrollY: 400,
-				paging: true,
+				paging: false,
 				//'lengthChange': false,
-				//'info' : false,
+				'info' : false,
+				'bFilter' : false,
 				data: dataSet,
 				columns: [
 						{ title: 'Title' },

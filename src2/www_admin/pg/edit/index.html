@@ -48,11 +48,13 @@ loadjs.ready(['dat'], function () {
 			['First post', 'blog/2013/second-post', 123, 'post', 'ok']
 		]
 
+
 		$('#list1').DataTable( {
 			//scrollY: 400,
-			paging: true,
+			paging: false,
 			//'lengthChange': false,
-			//'info' : false,
+			'info' : false,
+			'bFilter' : false,
 			data: dataSet,
 			columns: [
 					{ title: 'Title' },
@@ -64,16 +66,17 @@ loadjs.ready(['dat'], function () {
 		} )//dt
 
 })//ready</script></div><div class="split split-horizontal" id="right"><textarea id="cms1" rows="4" autofocus=""></textarea><script>loadjs.ready('site', function () {
-	loadjs([
-		 '//cdn.jsdelivr.net/npm/codemirror@5.37.0/lib/codemirror.css'
-		,'//cdn.jsdelivr.net/npm/codemirror@5.37.0/theme/neat.css'
-
-		,'//cdn.jsdelivr.net/npm/codemirror@5.37.0/lib/codemirror.min.js'
+	/*
+		,'//cdn.jsdelivr.net/npm/codemirror@5.37.0/theme/solarized.css'
 		,'//cdn.jsdelivr.net/npm/codemirror@5.37.0/mode/markdown/markdown.js'
 		,'//cdn.jsdelivr.net/npm/codemirror@5.37.0/mode/yaml/yaml.js'
-		,'//cdn.jsdelivr.net/npm/codemirror@5.37.0/mode/pug/pug.js'
-
 		,'//cdn.jsdelivr.net/npm/codemirror@5.37.0/keymap/sublime.js'
+	*/
+	loadjs([
+		 '//cdn.jsdelivr.net/npm/codemirror@5.37.0/lib/codemirror.css'
+
+		,'//cdn.jsdelivr.net/npm/codemirror@5.37.0/lib/codemirror.min.js'
+		,'//cdn.jsdelivr.net/npm/codemirror@5.37.0/mode/pug/pug.js'
 
 	], 'cm', { // bundle ID
 		async: false //required due to loadjs bug with bundles
@@ -85,16 +88,19 @@ loadjs.ready('cm', function () {
 
 let myCodeMirror
 function initCodeMirror() {
-	myCodeMirror = CodeMirror.fromTextArea( document.querySelector('#cms1') ,
+	myCodeMirror = CodeMirror.fromTextArea(
+				document.querySelector('#cms1') ,
 				{
-					mode:  '[ug]'
+					 mode:  'pug'
 					, lineNumbers: true
-					, theme: 'neat'
-					, keyMap: 'sublime'
+					, tabSize: 3
+					, indentWithTabs: true
+					//, theme: 'neat'
+					//, keyMap: 'sublime'
 					, v1iewportMargin: 'Infinity'
 				}
 		)
-	myCodeMirror.setSize('100%', 200)
+	myCodeMirror.setSize('100%', '100%')
 
 }// initCM()</script></div></div><script>let split = Split(['#left', '#right'], {
 	sizes: [25, 75],
