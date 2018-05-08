@@ -42,6 +42,8 @@ loadjs.ready('core', function () {
 		 '//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css'
 		,'//cdn.datatables.net/1.10.16/css/dataTables.semanticui.min.css'
 		,'//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js'
+		,'//cdn.datatables.net/select/1.2.5/js/dataTables.select.min.js'
+
 	], 'dwjs', { // bundle ID
 		async: false //required due to loadjs bug with bundles
 	})//load
@@ -58,12 +60,23 @@ loadjs.ready(['dwjs'], function () {
 			//'lengthChange': false,
 			'info' : false,
 			'bFilter' : false,
+			select: true,
 			data: dataSet,
 			columns: [
 					{ title: 'Part' }
 			]
 		} )//dt
 		loadjs.done('dw')
+
+		$('#list1 tbody').on('click', 'tr', function () {
+			var data = datatable.row( this ).data()
+			var item = data[0]
+			console.log( 'clicked on '+item+'\'s row' )
+			//open a new tab
+
+		})
+
+
 })//ready</script></div><div class="split split-horizontal" id="right"><textarea id="cms1" rows="4" autofocus=""></textarea><script>loadjs.ready('site', function () {
 	/*
 		,'//cdn.jsdelivr.net/npm/codemirror@5.37.0/theme/solarized.css'
