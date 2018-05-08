@@ -4,7 +4,7 @@ table#list1.display(width='95%')
 
 script.
 	loadjs.ready('core', function () {
-		callList1('123', 'edit2')
+		callList1('123', 'edit')
 	})//ready
 
 	function callList1(sec, folder_) {
@@ -18,8 +18,11 @@ script.
 		fetch(url)
 			.then(function(resp) {
 				return resp.json()
-			}).then(function(obj) {
-				console.log(obj)
+			}).then(function(ret) {
+				console.log(ret)
+				loadjs.ready(['dwjs'], function () {
+
+				})//ready
 			}).catch(function(err) {
 				console.log('error', err)
 		})//fetch
@@ -30,18 +33,17 @@ script.
 			 '//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css'
 			,'//cdn.datatables.net/1.10.16/css/dataTables.semanticui.min.css'
 			,'//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js'
-		], 'dat', { // bundle ID
+		], 'dwjs', { // bundle ID
 			async: false //required due to loadjs bug with bundles
 		})//load
 	})//ready
-	loadjs.ready(['dat'], function () {
+	loadjs.ready(['dwjs'], function () {
 
 			var dataSet = [
-				['First post', 'blog/2013/second-post', 123, 'post', 'ok'] ,
-				['First post', 'blog/2013/second-post', 123, 'post', 'ok']
+				['index.pug', 'pug', false]
 			]
 
-			$('#list1').DataTable( {
+			datatable =  $('#list1').DataTable( {
 				//scrollY: 400,
 				paging: false,
 				//'lengthChange': false,
@@ -49,12 +51,8 @@ script.
 				'bFilter' : false,
 				data: dataSet,
 				columns: [
-						{ title: 'Title' },
-						{ title: 'Item' },
-						{ title: 'Date' },
-						{ title: 'Type' },
-						{ title: 'Status' },
+						{ title: 'Part' }
 				]
 			} )//dt
-
+			loadjs.done('dw')
 	})//ready

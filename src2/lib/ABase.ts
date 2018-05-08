@@ -76,12 +76,13 @@ export class FileOps {
 				let f:string = files[i]
 				if(FileOps.hasWhiteSpace(f))
 					continue
-				let row = new Object()
-				row['name'] = f
+				let row = []
+				row.push( f ) //name
 				const full = this.root+folder +'/'+ f
 				const stats = fs.statSync(full)
-				row['dir']= stats.isDirectory()
-				row['ext']= f.split('.').pop()
+				row.push ( f.split('.').pop() )// ext
+				row.push(  stats.isDirectory() )
+
 				rows.push(row)
 			}// outer
 
