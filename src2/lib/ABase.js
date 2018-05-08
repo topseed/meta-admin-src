@@ -69,6 +69,7 @@ class FileOps {
         }
         catch (err) {
             logger.warn(err);
+            return JSON.stringify({ 'error': 'bad folder' });
         }
     }
 }

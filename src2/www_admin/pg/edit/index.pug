@@ -14,37 +14,13 @@ block main
 	p
 	input(type='text', name='secret', placeholder='123')
 	p
-	script.
-		loadjs.ready('core', function () {
-			callList1('123', 'edit2')
-		})//ready
-
-		function callList1(sec, folder_) {
-			console.log('calling list')
-
-			let url = '/api/list?secret='
-			let folder = '&folder='
-			url = url + sec + folder + folder_
-			console.log(url)
-
-			fetch(url)
-				.then(function(resp) {
-					return resp.json()
-				}).then(function(obj) {
-					console.log(obj)
-				}).catch(function(err) {
-					console.log('error',err)
-			})//fetch
-		}//call()
 
 	div.splitCont
 		#left.split.split-horizontal
-			p o hi2
-			p o hi2
+			include list
 
 		#right.split.split-horizontal
-			p o hi3
-			p o hi3
+			include zoom
 
 	script.
 		let split = Split(['#left', '#right'], {

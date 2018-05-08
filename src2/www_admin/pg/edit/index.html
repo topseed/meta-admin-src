@@ -10,7 +10,7 @@
 .pusher {
 	margin-top: 1.5em;
 	margin-left: 250px;
-}</style><div class="pusher"><script src="//cdn.jsdelivr.net/npm/split.js@1.3.5/split.min.js"></script><p></p><br><p></p><input id="page1" type="text" name="page" placeholder="blog"><p></p><input type="text" name="secret" placeholder="123"><p></p><script>loadjs.ready('core', function () {
+}</style><div class="pusher"><script src="//cdn.jsdelivr.net/npm/split.js@1.3.5/split.min.js"></script><p></p><br><p></p><input id="page1" type="text" name="page" placeholder="blog"><p></p><input type="text" name="secret" placeholder="123"><p></p><div class="splitCont"><div class="split split-horizontal" id="left"><table class="display" id="list1" width="95%"></table><script>loadjs.ready('core', function () {
 	callList1('123', 'edit2')
 })//ready
 
@@ -28,10 +28,75 @@ function callList1(sec, folder_) {
 		}).then(function(obj) {
 			console.log(obj)
 		}).catch(function(err) {
-			console.log('error',err)
+			console.log('error', err)
 	})//fetch
 }//call()
-</script><div class="splitCont"><div class="split split-horizontal" id="left"><p>o hi2</p><p>o hi2</p></div><div class="split split-horizontal" id="right"><p>o hi3</p><p>o hi3</p></div></div><script>let split = Split(['#left', '#right'], {
+
+loadjs.ready('core', function () {
+	loadjs([
+		 '//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css'
+		,'//cdn.datatables.net/1.10.16/css/dataTables.semanticui.min.css'
+		,'//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js'
+	], 'dat', { // bundle ID
+		async: false //required due to loadjs bug with bundles
+	})//load
+})//ready
+loadjs.ready(['dat'], function () {
+
+		var dataSet = [
+			['First post', 'blog/2013/second-post', 123, 'post', 'ok'] ,
+			['First post', 'blog/2013/second-post', 123, 'post', 'ok']
+		]
+
+		$('#list1').DataTable( {
+			//scrollY: 400,
+			paging: true,
+			//'lengthChange': false,
+			//'info' : false,
+			data: dataSet,
+			columns: [
+					{ title: 'Title' },
+					{ title: 'Item' },
+					{ title: 'Date' },
+					{ title: 'Type' },
+					{ title: 'Status' },
+			]
+		} )//dt
+
+})//ready</script></div><div class="split split-horizontal" id="right"><textarea id="cms1" rows="4" autofocus=""></textarea><script>loadjs.ready('site', function () {
+	loadjs([
+		 '//cdn.jsdelivr.net/npm/codemirror@5.37.0/lib/codemirror.css'
+		,'//cdn.jsdelivr.net/npm/codemirror@5.37.0/theme/neat.css'
+
+		,'//cdn.jsdelivr.net/npm/codemirror@5.37.0/lib/codemirror.min.js'
+		,'//cdn.jsdelivr.net/npm/codemirror@5.37.0/mode/markdown/markdown.js'
+		,'//cdn.jsdelivr.net/npm/codemirror@5.37.0/mode/yaml/yaml.js'
+		,'//cdn.jsdelivr.net/npm/codemirror@5.37.0/mode/pug/pug.js'
+
+		,'//cdn.jsdelivr.net/npm/codemirror@5.37.0/keymap/sublime.js'
+
+	], 'cm', { // bundle ID
+		async: false //required due to loadjs bug with bundles
+	})//load
+})//ready
+loadjs.ready('cm', function () {
+	initCodeMirror()
+})//ready
+
+let myCodeMirror
+function initCodeMirror() {
+	myCodeMirror = CodeMirror.fromTextArea( document.querySelector('#cms1') ,
+				{
+					mode:  '[ug]'
+					, lineNumbers: true
+					, theme: 'neat'
+					, keyMap: 'sublime'
+					, v1iewportMargin: 'Infinity'
+				}
+		)
+	myCodeMirror.setSize('100%', 200)
+
+}// initCM()</script></div></div><script>let split = Split(['#left', '#right'], {
 	sizes: [25, 75],
 	minSize: [120, 300]
 })

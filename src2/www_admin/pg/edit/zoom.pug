@@ -1,0 +1,40 @@
+
+
+textarea#cms1(rows='4', autofocus='')
+
+script.
+	loadjs.ready('site', function () {
+		loadjs([
+			 '//cdn.jsdelivr.net/npm/codemirror@5.37.0/lib/codemirror.css'
+			,'//cdn.jsdelivr.net/npm/codemirror@5.37.0/theme/neat.css'
+
+			,'//cdn.jsdelivr.net/npm/codemirror@5.37.0/lib/codemirror.min.js'
+			,'//cdn.jsdelivr.net/npm/codemirror@5.37.0/mode/markdown/markdown.js'
+			,'//cdn.jsdelivr.net/npm/codemirror@5.37.0/mode/yaml/yaml.js'
+			,'//cdn.jsdelivr.net/npm/codemirror@5.37.0/mode/pug/pug.js'
+
+			,'//cdn.jsdelivr.net/npm/codemirror@5.37.0/keymap/sublime.js'
+
+		], 'cm', { // bundle ID
+			async: false //required due to loadjs bug with bundles
+		})//load
+	})//ready
+	loadjs.ready('cm', function () {
+		initCodeMirror()
+	})//ready
+
+	let myCodeMirror
+	function initCodeMirror() {
+		myCodeMirror = CodeMirror.fromTextArea( document.querySelector('#cms1') ,
+					{
+						mode:  '[ug]'
+						, lineNumbers: true
+						, theme: 'neat'
+						, keyMap: 'sublime'
+						, v1iewportMargin: 'Infinity'
+					}
+			)
+		myCodeMirror.setSize('100%', 200)
+
+	}// initCM()
+
