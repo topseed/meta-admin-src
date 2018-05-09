@@ -1,5 +1,4 @@
 
-
 textarea#cms1(rows='400')
 
 script.
@@ -55,11 +54,11 @@ script.
 			.then(function(resp) {
 				return resp.text()
 			}).then(function(ret) {
-				console.log(ret)
+
 				loadjs.ready('cm', function() {
 					myCodeMirror.getDoc().setValue(ret)
-
 				})
+
 			}).catch(function(err) {
 				console.log('error', err)
 		})//fetch

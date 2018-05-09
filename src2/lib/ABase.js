@@ -27,24 +27,24 @@ class FileOps {
         return s.indexOf(' ') >= 0;
     }
     read(folder, file) {
-        const files = fs.readdirSync(this.root + folder);
         const ext = file.split('.').pop();
         if (!FileOps.READ_VALID.includes(ext))
             return 'other media';
-        const full = this.root + folder + file;
+        const full = this.root + folder + '/' + file;
+        logger.trace(full);
         if (!fs.existsSync(full))
             return file + ' does not exists';
         const str = fs.readFileSync(full, 'utf8');
         return str;
     }
     write(folder, file, txt) {
-        const files = fs.readdirSync(this.root + folder);
         const ext = file.split('.').pop();
         if (!FileOps.READ_VALID.includes(ext))
             return false;
         if (FileOps.hasWhiteSpace(file))
             return false;
-        const full = this.root + folder + file;
+        const full = this.root + folder + '/' + file;
+        logger.trace(full);
         fs.writeFileSync(full, txt, 'utf8');
         return true;
     }
@@ -77,7 +77,6 @@ FileOps.READ_VALID = ['pug', 'yaml', 'md', 'css', 'txt', 'json', 'html', 'js', '
 exports.FileOps = FileOps;
 class SrvUtil {
     static ret(res, msg) {
-        logger.trace(msg);
         res.send(msg);
     }
     static removeFile(f) {

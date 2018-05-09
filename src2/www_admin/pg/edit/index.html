@@ -26,7 +26,7 @@ function callList1(sec, folder_) {
 		.then(function(resp) {
 			return resp.json()
 		}).then(function(ret) {
-			console.log(ret)
+			//console.log(ret)
 			loadjs.ready(['dw'], function () {
 				 datatable.clear()
 				 datatable.rows.add(ret)
@@ -127,11 +127,11 @@ function read(folder_, data) {
 		.then(function(resp) {
 			return resp.text()
 		}).then(function(ret) {
-			console.log(ret)
+
 			loadjs.ready('cm', function() {
 				myCodeMirror.getDoc().setValue(ret)
-
 			})
+
 		}).catch(function(err) {
 			console.log('error', err)
 	})//fetch

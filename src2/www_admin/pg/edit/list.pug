@@ -19,7 +19,7 @@ script.
 			.then(function(resp) {
 				return resp.json()
 			}).then(function(ret) {
-				console.log(ret)
+				//console.log(ret)
 				loadjs.ready(['dw'], function () {
 					 datatable.clear()
 					 datatable.rows.add(ret)

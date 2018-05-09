@@ -7,6 +7,4 @@ package-lock.json
 
 yarn.lock
 
-*.ts
-
 index.*

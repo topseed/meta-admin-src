@@ -42,11 +42,11 @@ export class FileOps {
 	static READ_VALID = ['pug','yaml','md', 'css', 'txt', 'json', 'html','js','ts']
 
 	read(folder, file):string {
-		const files = fs.readdirSync(this.root+folder)
 		const ext = file.split('.').pop()
 		if(!FileOps.READ_VALID.includes(ext))
 			return 'other media'
-		const full = this.root+folder + file
+		const full = this.root+folder +'/'+ file
+		logger.trace(full)
 		if (!fs.existsSync(full))
 			return file + ' does not exists'
 
@@ -55,13 +55,13 @@ export class FileOps {
 	}
 
 	write(folder, file, txt:string):boolean {
-		const files = fs.readdirSync(this.root+folder)
 		const ext = file.split('.').pop()
 		if(!FileOps.READ_VALID.includes(ext))
 			return false
 		if(FileOps.hasWhiteSpace(file))
 			return false
-		const full = this.root+folder + file
+		const full = this.root+folder +'/'+ file
+		logger.trace(full)
 
 		fs.writeFileSync(full, txt, 'utf8')
 		return true
@@ -109,8 +109,9 @@ class SrvUtil {
 	static destProp = 'dest'
 
 	static WWW
+
 	static ret(res, msg) {
-		logger.trace(msg)
+		//logger.trace(msg)
 		res.send(msg)
 	}
 
