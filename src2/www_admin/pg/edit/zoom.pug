@@ -24,6 +24,8 @@ script.
 		initCodeMirror()
 		$('#saveEdits').click(function() {
 			console.log('save')
+			saveEdits('pg/edit', 'index.html')
+
 		})
 
 	})//ready
@@ -63,6 +65,33 @@ script.
 				loadjs.ready('cm', function() {
 					myCodeMirror.getDoc().setValue(ret)
 				})
+
+			}).catch(function(err) {
+				console.log('error', err)
+		})//fetch
+	}//()
+
+	function saveEdits(folder_, fn_) {
+		let txt = myCodeMirror.getDoc().getValue()
+
+		let sec_ = '123'
+		let url = '/api/write?secret='
+		let folder = '&folder='
+		let fn = '&fn='
+		url = url + sec_ + folder + folder_ + fn + fn_
+		console.log(url)
+
+		let headers = new Headers()
+		headers.append('Content-Type', 'text/plain')
+		fetch(url, {
+				method: 'POST',
+				headers : headers,
+				body: txt,
+			})
+			.then(function(resp) {
+				return resp.text()
+			}).then(function(ret) {
+
 
 			}).catch(function(err) {
 				console.log('error', err)
