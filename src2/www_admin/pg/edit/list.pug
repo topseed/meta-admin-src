@@ -42,32 +42,30 @@ script.
 		})//load
 	})//ready
 	loadjs.ready(['dwjs'], function () {
+		var dataSet = [
+			['index.pug', 'pug', false]
+		]
 
-			var dataSet = [
-				['index.pug', 'pug', false]
+		datatable =  $('#list1').DataTable( {
+			//scrollY: 400,
+			paging: false,
+			//'lengthChange': false,
+			'info' : false,
+			'bFilter' : false,
+			select: true,
+			data: dataSet,
+			columns: [
+					{ title: 'Part' }
 			]
+		} )//dt
+		loadjs.done('dw')
 
-			datatable =  $('#list1').DataTable( {
-				//scrollY: 400,
-				paging: false,
-				//'lengthChange': false,
-				'info' : false,
-				'bFilter' : false,
-				select: true,
-				data: dataSet,
-				columns: [
-						{ title: 'Part' }
-				]
-			} )//dt
-			loadjs.done('dw')
+		$('#list1 tbody').on('click', 'tr', function () {
+			var data = datatable.row( this ).data()
+			var item = data[0]
+			console.log( 'clicked on '+item+'\'s row' )
 
-			$('#list1 tbody').on('click', 'tr', function () {
-				var data = datatable.row( this ).data()
-				var item = data[0]
-				console.log( 'clicked on '+item+'\'s row' )
-				//open a new tab
-
-			})
-
+			read('pg/edit', data)
+		})
 
 	})//ready

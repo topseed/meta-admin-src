@@ -49,33 +49,31 @@ loadjs.ready('core', function () {
 	})//load
 })//ready
 loadjs.ready(['dwjs'], function () {
+	var dataSet = [
+		['index.pug', 'pug', false]
+	]
 
-		var dataSet = [
-			['index.pug', 'pug', false]
+	datatable =  $('#list1').DataTable( {
+		//scrollY: 400,
+		paging: false,
+		//'lengthChange': false,
+		'info' : false,
+		'bFilter' : false,
+		select: true,
+		data: dataSet,
+		columns: [
+				{ title: 'Part' }
 		]
+	} )//dt
+	loadjs.done('dw')
 
-		datatable =  $('#list1').DataTable( {
-			//scrollY: 400,
-			paging: false,
-			//'lengthChange': false,
-			'info' : false,
-			'bFilter' : false,
-			select: true,
-			data: dataSet,
-			columns: [
-					{ title: 'Part' }
-			]
-		} )//dt
-		loadjs.done('dw')
+	$('#list1 tbody').on('click', 'tr', function () {
+		var data = datatable.row( this ).data()
+		var item = data[0]
+		console.log( 'clicked on '+item+'\'s row' )
 
-		$('#list1 tbody').on('click', 'tr', function () {
-			var data = datatable.row( this ).data()
-			var item = data[0]
-			console.log( 'clicked on '+item+'\'s row' )
-			//open a new tab
-
-		})
-
+		read('pg/edit', data)
+	})
 
 })//ready</script></div><div class="split split-horizontal" id="right"><textarea id="cms1" rows="400"></textarea><script>loadjs.ready('site', function () {
 	/*
@@ -102,45 +100,41 @@ let myCodeMirror
 function initCodeMirror() {
 	myCodeMirror = CodeMirror.fromTextArea(
 				document.querySelector('#cms1') ,
-				{
-					 mode:  'pug'
-					, lineNumbers: true
-					, tabSize: 3
-					, indentWithTabs: true
-					//, theme: 'neat'
-					//, keyMap: 'sublime'
-					, v1iewportMargin: 'Infinity'
-				}
+					{
+						mode:  'pug'
+						, lineNumbers: true
+						, tabSize: 3
+						, indentWithTabs: true
+						//, theme: 'neat'
+						//, keyMap: 'sublime'
+						, v1iewportMargin: 'Infinity'
+					}
 		)
 	myCodeMirror.setSize('100%', '100%')
 	loadjs.done('cm')
 }// initCM()
 
-function display(data) {
-	// calling display
+function read(folder_, data) {
+	let fn_ = data[0]
 	let sec_ = '123'
-	let folder_ = 'edit'
-	let fn_ = 'index.pug'
-	loadjs.ready(cm, function() {
-		let url = '/api/read?secret='
-		let folder = '&folder='
-		let fn = '&fn='
-		url = url + sec_ + folder + folder_ + fn + fn_
-		console.log(url)
+	let url = '/api/read?secret='
+	let folder = '&folder='
+	let fn = '&fn='
+	url = url + sec_ + folder + folder_ + fn + fn_
+	console.log(url)
 
+	fetch(url)
+		.then(function(resp) {
+			return resp.text()
+		}).then(function(ret) {
+			console.log(ret)
+			loadjs.ready('cm', function() {
+				myCodeMirror.getDoc().setValue(ret)
 
-		fetch(url)
-			.then(function(resp) {
-				return resp.text()
-			}).then(function(ret) {
-				console.log(ret)
-
-
-			}).catch(function(err) {
-				console.log('error', err)
-		})//fetch
-
-	})//ready
+			})
+		}).catch(function(err) {
+			console.log('error', err)
+	})//fetch
 }//()</script></div></div><script>let split = Split(['#left', '#right'], {
 	sizes: [25, 75],
 	minSize: [120, 300]
@@ -200,4 +194,4 @@ loadjs.ready('style', function() {
 		console.log(Date.now()-_start)//time to show
 	},1000/60)// 2 frames
 
-})//ready</script><link rel="stylesheet" href="/assets/Semantic-UI/dist/semantic.min.css" onload="cssLoaded()"><!- nB v2.05.11 --></body></html>
+})//ready</script><link rel="stylesheet" href="/assets/Semantic-UI/dist/semantic.min.css" onload="cssLoaded()"><!- nB v2.05.15 --></body></html>
