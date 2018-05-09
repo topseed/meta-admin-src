@@ -4,6 +4,7 @@
 }
 
 .ui.menu {
+	dd: dd;
 	height: 1.5em !important;
 }
 
@@ -152,6 +153,7 @@ function saveEdits(folder_, fn_) {
 	let folder = '&folder='
 	let fn = '&fn='
 	url = url + sec_ + folder + folder_ + fn + fn_
+
 	console.log(url)
 
 	let headers = new Headers()

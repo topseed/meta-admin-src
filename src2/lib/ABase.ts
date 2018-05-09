@@ -56,6 +56,8 @@ export class FileOps {
 
 	write(folder, file, txt:string):boolean {
 		const ext = file.split('.').pop()
+
+		logger.trace(ext)
 		if(!FileOps.READ_VALID.includes(ext))
 			return false
 		if(FileOps.hasWhiteSpace(file))
@@ -229,7 +231,9 @@ export class Srv {
 	apiSetup() {//api
 		this.uploadSetup()
 
-		SrvUtil.app.get('/api/write', function (req, res) {
+		SrvUtil.app.use(bodyParser.text())
+
+		SrvUtil.app.post('/api/write', function (req, res) {
 			let qs = req.query
 			if(!SrvUtil.checkSecret(qs,res))
 				return;
@@ -244,8 +248,7 @@ export class Srv {
 				const fn = qs['fn']
 				const fo = new FileOps(SrvUtil.mount)
 
-				let txt = req.body.toString()
-				logger.trace(txt)
+				let txt = req.body
 				let msg = fo.write(folder, fn, txt)
 
 				//autoBake
@@ -352,7 +355,6 @@ export class Srv {
 	}//()
 
 	start() {
-		SrvUtil.app.use(bodyParser.text())
 		SrvUtil.app.use(express.static(SrvUtil.WWW))
 
 		SrvUtil.app.listen(SrvUtil.prop.port, function () {
