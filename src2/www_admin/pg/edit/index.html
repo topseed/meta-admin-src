@@ -92,8 +92,13 @@ loadjs.ready(['dwjs'], function () {
 		async: false //required due to loadjs bug with bundles
 	})//load
 })//ready
+
 loadjs.ready('cmjs', function () {
 	initCodeMirror()
+	$('#saveEdits').click(function() {
+		console.log('save')
+	})
+
 })//ready
 
 let myCodeMirror
@@ -135,7 +140,10 @@ function read(folder_, data) {
 		}).catch(function(err) {
 			console.log('error', err)
 	})//fetch
-}//()</script></div></div><script>let split = Split(['#left', '#right'], {
+}//()
+</script><style>#cms1 {
+
+}</style></div></div><p></p><hr><button class="ui button" id="saveEdits" type="submit">Save</button><script>let split = Split(['#left', '#right'], {
 	sizes: [25, 75],
 	minSize: [120, 300]
 })
@@ -152,9 +160,10 @@ loadjs.ready('style', function () {
 }
 
 .splitCont {
-	width: calc(100% - 10px);
-	min-height: calc(100vh - 80px);
-	border: 3px solid #ddd;
+	width: calc(100% - 30px);
+	height: calc(100vh - 220px);
+
+	border: 2px solid #ddd;
 	border-radius: 5px;
 }
 
@@ -162,6 +171,8 @@ loadjs.ready('style', function () {
 	-webkit-box-sizing: border-box;
 		-moz-box-sizing: border-box;
 				box-sizing: border-box;
+
+	max-height: 100%;
 
 	overflow-y: auto;
 	overflow-x: auto;
@@ -179,7 +190,7 @@ loadjs.ready('style', function () {
 }
 
 .split.split-horizontal, .gutter.gutter-horizontal {
-	height: calc(100vh - 84px);
+	height: calc(100vh - 224px);
 	float: left;
 }</style></div><script>console.log('layout')
 

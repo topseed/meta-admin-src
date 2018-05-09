@@ -22,6 +22,10 @@ block main
 		#right.split.split-horizontal
 			include zoom
 
+	p
+	hr
+	button#saveEdits.ui.button(type='submit') Save
+
 	script.
 		let split = Split(['#left', '#right'], {
 			sizes: [25, 75],
@@ -42,9 +46,10 @@ block main
 		}
 
 		.splitCont {
-			width: calc(100% - 10px);
-			min-height: calc(100vh - 80px);
-			border: 3px solid #ddd;
+			width: calc(100% - 30px);
+			height: calc(100vh - 220px);
+
+			border: 2px solid #ddd;
 			border-radius: 5px;
 		}
 
@@ -52,6 +57,8 @@ block main
 			-webkit-box-sizing: border-box;
 				-moz-box-sizing: border-box;
 						box-sizing: border-box;
+
+			max-height: 100%;
 
 			overflow-y: auto;
 			overflow-x: auto;
@@ -69,6 +76,6 @@ block main
 		}
 
 		.split.split-horizontal, .gutter.gutter-horizontal {
-			height: calc(100vh - 84px);
+			height: calc(100vh - 224px);
 			float: left;
 		}
