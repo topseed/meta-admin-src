@@ -77,7 +77,7 @@ loadjs.ready(['dwjs'], function () {
 		})
 
 
-})//ready</script></div><div class="split split-horizontal" id="right"><textarea id="cms1" rows="4" autofocus=""></textarea><script>loadjs.ready('site', function () {
+})//ready</script></div><div class="split split-horizontal" id="right"><textarea id="cms1" rows="400"></textarea><script>loadjs.ready('site', function () {
 	/*
 		,'//cdn.jsdelivr.net/npm/codemirror@5.37.0/theme/solarized.css'
 		,'//cdn.jsdelivr.net/npm/codemirror@5.37.0/mode/markdown/markdown.js'
@@ -90,11 +90,11 @@ loadjs.ready(['dwjs'], function () {
 		,'//cdn.jsdelivr.net/npm/codemirror@5.37.0/lib/codemirror.min.js'
 		,'//cdn.jsdelivr.net/npm/codemirror@5.37.0/mode/pug/pug.js'
 
-	], 'cm', { // bundle ID
+	], 'cmjs', { // bundle ID
 		async: false //required due to loadjs bug with bundles
 	})//load
 })//ready
-loadjs.ready('cm', function () {
+loadjs.ready('cmjs', function () {
 	initCodeMirror()
 })//ready
 
@@ -113,8 +113,35 @@ function initCodeMirror() {
 				}
 		)
 	myCodeMirror.setSize('100%', '100%')
+	loadjs.done('cm')
+}// initCM()
 
-}// initCM()</script></div></div><script>let split = Split(['#left', '#right'], {
+function display(data) {
+	// calling display
+	let sec_ = '123'
+	let folder_ = 'edit'
+	let fn_ = 'index.pug'
+	loadjs.ready(cm, function() {
+		let url = '/api/read?secret='
+		let folder = '&folder='
+		let fn = '&fn='
+		url = url + sec_ + folder + folder_ + fn + fn_
+		console.log(url)
+
+
+		fetch(url)
+			.then(function(resp) {
+				return resp.text()
+			}).then(function(ret) {
+				console.log(ret)
+
+
+			}).catch(function(err) {
+				console.log('error', err)
+		})//fetch
+
+	})//ready
+}//()</script></div></div><script>let split = Split(['#left', '#right'], {
 	sizes: [25, 75],
 	minSize: [120, 300]
 })
