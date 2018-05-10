@@ -1,5 +1,5 @@
 
-riot.tag2('zoom-tag', '<textarea id="cms1" rows="400"></textarea>', '', '', function(opts) {
+riot.tag2('zoom-tag', '<textarea id="cms1" rows="4005"></textarea>', '', '', function(opts) {
     loadjs.ready('site', function () {
 
     	loadjs([

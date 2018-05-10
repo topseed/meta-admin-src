@@ -60,10 +60,12 @@ export class FileOps {
 
 		const ext = file.split('.').pop()
 		if (ext =='pug') {
-			if(ext.includes('-tag')) {
+
+			if( file.indexOf('-tag') >= 0 ) {
 				try {
 					let msg = SrvUtil.tags(folder)
 					SrvUtil.ret(res, msg)
+
 				} catch(err) {
 					SrvUtil.ret(res, err)
 				}
@@ -190,6 +192,8 @@ class SrvUtil {
 export class Srv {
 
 	constructor(bake_, itemize_, tags_, prop_) {// functions to call
+		SrvUtil.tags = tags_
+
 		SrvUtil.bake = bake_
 		SrvUtil.itemize = itemize_
 		SrvUtil.prop = prop_

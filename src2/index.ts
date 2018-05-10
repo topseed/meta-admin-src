@@ -28,9 +28,11 @@ console.log(fo.read(tst,'index2.html'))
 //process.exit()
 
 function bake(dir) {
-	let folder = config.mount + '/' + dir
+	let folder = config.mount + dir
+	logger.trace(folder)
+
 	const start = new Date()
-	console.log('Baking ' + folder)
+
 	let d = new Dirs(folder)
 	let dirs =d.get()
 	let msg:string = ''
@@ -43,7 +45,8 @@ function bake(dir) {
 }
 
 function itemize(dir) {
-	let folder = config.mount + '/' + dir
+	let folder = config.mount + dir
+	logger.trace(folder)
 	const start = new Date()
 
 	const i = new Items(folder)
@@ -53,12 +56,14 @@ function itemize(dir) {
 
 
 function tags(dir) {
-	let folder = config.mount + '/' + dir
+	let folder = config.mount + dir
+	logger.trace(folder)
 	const start = new Date()
 
 	let t = new Tag(folder)
 	let lst = t.get()
-	t.bake(lst)
+	let msg = t.bake(lst)
+	return msg
 }
 
 

@@ -42,7 +42,7 @@ class FileOps {
         logger.trace(full);
         const ext = file.split('.').pop();
         if (ext == 'pug') {
-            if (ext.includes('-tag')) {
+            if (file.indexOf('-tag') >= 0) {
                 try {
                     let msg = SrvUtil.tags(folder);
                     SrvUtil.ret(res, msg);
@@ -153,6 +153,7 @@ SrvUtil.srcProp = 'src';
 SrvUtil.destProp = 'dest';
 class Srv {
     constructor(bake_, itemize_, tags_, prop_) {
+        SrvUtil.tags = tags_;
         SrvUtil.bake = bake_;
         SrvUtil.itemize = itemize_;
         SrvUtil.prop = prop_;
