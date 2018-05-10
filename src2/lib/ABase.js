@@ -37,9 +37,51 @@ class FileOps {
         const str = fs.readFileSync(full, 'utf8');
         return str;
     }
+    autoBake(res, folder, file) {
+        const full = this.root + folder + '/' + file;
+        logger.trace(full);
+        const ext = file.split('.').pop();
+        if (ext == 'pug') {
+            if (ext.includes('-tag')) {
+                try {
+                    let msg = SrvUtil.tags(folder);
+                    SrvUtil.ret(res, msg);
+                }
+                catch (err) {
+                    SrvUtil.ret(res, err);
+                }
+                return 'tag';
+            }
+            try {
+                let msg = SrvUtil.bake(folder);
+                SrvUtil.ret(res, msg);
+            }
+            catch (err) {
+                SrvUtil.ret(res, err);
+            }
+            return 'pug';
+        }
+        if (ext == 'yaml') {
+            try {
+                let msg = SrvUtil.bake(folder);
+                SrvUtil.ret(res, msg);
+            }
+            catch (err) {
+                SrvUtil.ret(res, err);
+            }
+            try {
+                let msg = SrvUtil.itemize(folder);
+                SrvUtil.ret(res, msg);
+            }
+            catch (err) {
+                SrvUtil.ret(res, err);
+            }
+            return 'yaml';
+        }
+        return 'nothing to bake';
+    }
     write(folder, file, txt) {
         const ext = file.split('.').pop();
-        logger.trace(ext);
         if (!FileOps.READ_VALID.includes(ext))
             return false;
         if (FileOps.hasWhiteSpace(file))
@@ -116,7 +158,7 @@ SrvUtil.folderProp = 'folder';
 SrvUtil.srcProp = 'src';
 SrvUtil.destProp = 'dest';
 class Srv {
-    constructor(bake_, itemize_, prop_) {
+    constructor(bake_, itemize_, tags_, prop_) {
         SrvUtil.bake = bake_;
         SrvUtil.itemize = itemize_;
         SrvUtil.prop = prop_;
@@ -198,7 +240,7 @@ class Srv {
                 const fo = new FileOps(SrvUtil.mount);
                 let txt = req.body;
                 let msg = fo.write(folder, fn, txt);
-                SrvUtil.ret(res, msg);
+                fo.autoBake(res, folder, fn);
             }
             catch (err) {
                 SrvUtil.ret(res, err);
@@ -254,6 +296,23 @@ class Srv {
             }
             try {
                 let msg = SrvUtil.itemize(qs[SrvUtil.folderProp]);
+                SrvUtil.ret(res, msg);
+            }
+            catch (err) {
+                SrvUtil.ret(res, err);
+            }
+        });
+        SrvUtil.app.get('/api/tags', function (req, res) {
+            let qs = req.query;
+            if (!SrvUtil.checkSecret(qs, res))
+                return;
+            let keys = Object.keys(qs);
+            if (!keys.includes(SrvUtil.folderProp)) {
+                SrvUtil.ret(res, 'no folder');
+                return;
+            }
+            try {
+                let msg = SrvUtil.tags(qs[SrvUtil.folderProp]);
                 SrvUtil.ret(res, msg);
             }
             catch (err) {

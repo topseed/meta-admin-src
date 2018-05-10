@@ -30,6 +30,13 @@ function itemize(dir) {
     let msg = i.itemize();
     return msg;
 }
+function tags(dir) {
+    let folder = config.mount + '/' + dir;
+    const start = new Date();
+    const i = new Base_1.Items(folder);
+    let msg = i.itemize();
+    return msg;
+}
 const commandLineArgs = require('command-line-args');
 const optionDefinitions = [
     { name: 'admin', type: String, defaultOption: true },
@@ -40,6 +47,6 @@ arg = arg + '/admin.yaml';
 console.log(arg);
 let config = yaml.load(fs.readFileSync(arg));
 console.log(config);
-const srv = new ABase_1.Srv(bake, itemize, config);
+const srv = new ABase_1.Srv(bake, itemize, tags, config);
 srv.apiSetup();
 srv.start();

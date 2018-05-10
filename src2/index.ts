@@ -51,6 +51,17 @@ function itemize(dir) {
 	return msg
 }
 
+
+function tags(dir) {
+	let folder = config.mount + '/' + dir
+	const start = new Date()
+
+	const i = new Items(folder)
+	let msg = i.itemize()
+	return msg
+}
+
+
 // /////////////////////////////////////////////////////////////////
 const commandLineArgs = require('command-line-args')
 
@@ -66,6 +77,6 @@ console.log(arg)
 let config = yaml.load(fs.readFileSync(arg))
 console.log(config)
 
-const srv = new Srv(bake, itemize, config)
+const srv = new Srv(bake, itemize, tags, config)
 srv.apiSetup()
 srv.start()

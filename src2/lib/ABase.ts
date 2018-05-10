@@ -54,10 +54,52 @@ export class FileOps {
 		return str
 	}
 
+	autoBake(res, folder, file):string {
+		const full = this.root+folder +'/'+ file
+		logger.trace(full)
+
+		const ext = file.split('.').pop()
+		if (ext =='pug') {
+			if(ext.includes('-tag')) {
+				try {
+					let msg = SrvUtil.tags(folder)
+					SrvUtil.ret(res, msg)
+				} catch(err) {
+					SrvUtil.ret(res, err)
+				}
+				return 'tag'
+			}
+			// pug
+			try {
+				let msg = SrvUtil.bake(folder)
+				SrvUtil.ret(res, msg)
+			} catch(err) {
+				SrvUtil.ret(res, err)
+			}
+			return 'pug'
+		}
+		if (ext =='yaml') {// bake and itemize
+			try {
+				let msg = SrvUtil.bake(folder)
+				SrvUtil.ret(res, msg)
+			} catch(err) {
+				SrvUtil.ret(res, err)
+			}
+			//and then itemize, it goes one up
+			try {
+				let msg = SrvUtil.itemize(folder)
+				SrvUtil.ret(res, msg)
+			} catch(err) {
+				SrvUtil.ret(res, err)
+			}
+			return 'yaml'
+		}
+
+		return 'nothing to bake'
+	}
+
 	write(folder, file, txt:string):boolean {
 		const ext = file.split('.').pop()
-
-		logger.trace(ext)
 		if(!FileOps.READ_VALID.includes(ext))
 			return false
 		if(FileOps.hasWhiteSpace(file))
@@ -100,6 +142,8 @@ export class FileOps {
 class SrvUtil {
 	static bake //()
 	static itemize// ()
+	static tags// ()
+
 	static prop //ROOT folder, yaml, etc.
 	static mount
 	static app //express
@@ -150,7 +194,7 @@ class SrvUtil {
 
 export class Srv {
 
-	constructor(bake_, itemize_, prop_) {// functions to call
+	constructor(bake_, itemize_, tags_, prop_) {// functions to call
 		SrvUtil.bake = bake_
 		SrvUtil.itemize = itemize_
 		SrvUtil.prop = prop_
@@ -251,9 +295,8 @@ export class Srv {
 				let txt = req.body
 				let msg = fo.write(folder, fn, txt)
 
-				//autoBake
+				fo.autoBake(res, folder, fn)
 
-				SrvUtil.ret(res, msg)
 			} catch(err) {
 				SrvUtil.ret(res, err)
 			}
@@ -314,6 +357,24 @@ export class Srv {
 
 			try {
 				let msg = SrvUtil.itemize(qs[SrvUtil.folderProp])
+				SrvUtil.ret(res, msg)
+			} catch(err) {
+				SrvUtil.ret(res, err)
+			}
+		})//
+
+		SrvUtil.app.get('/api/tags', function (req, res) {
+			let qs = req.query
+			if(!SrvUtil.checkSecret(qs,res))
+				return;
+			let keys = Object.keys( qs )
+			if(!keys.includes(SrvUtil.folderProp)) {
+				SrvUtil.ret(res,'no folder')
+				return
+			}
+
+			try {
+				let msg = SrvUtil.tags(qs[SrvUtil.folderProp])
 				SrvUtil.ret(res, msg)
 			} catch(err) {
 				SrvUtil.ret(res, err)
