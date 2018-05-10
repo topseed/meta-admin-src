@@ -56,9 +56,9 @@ function tags(dir) {
 	let folder = config.mount + '/' + dir
 	const start = new Date()
 
-	const i = new Items(folder)
-	let msg = i.itemize()
-	return msg
+	let t = new Tag(folder)
+	let lst = t.get()
+	t.bake(lst)
 }
 
 
@@ -66,9 +66,9 @@ function tags(dir) {
 const commandLineArgs = require('command-line-args')
 
 const optionDefinitions = [
-	{ name: 'admin',  type: String, defaultOption: true},
+	{ name: 'admin',  type: String, defaultOption: true}
+ ]
 
-]
 const argsParsed = commandLineArgs(optionDefinitions)
 let arg:string = argsParsed.admin
 arg = arg +'/admin.yaml'

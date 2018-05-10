@@ -33,13 +33,13 @@ function itemize(dir) {
 function tags(dir) {
     let folder = config.mount + '/' + dir;
     const start = new Date();
-    const i = new Base_1.Items(folder);
-    let msg = i.itemize();
-    return msg;
+    let t = new Base_1.Tag(folder);
+    let lst = t.get();
+    t.bake(lst);
 }
 const commandLineArgs = require('command-line-args');
 const optionDefinitions = [
-    { name: 'admin', type: String, defaultOption: true },
+    { name: 'admin', type: String, defaultOption: true }
 ];
 const argsParsed = commandLineArgs(optionDefinitions);
 let arg = argsParsed.admin;

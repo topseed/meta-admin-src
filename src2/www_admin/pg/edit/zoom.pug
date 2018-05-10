@@ -25,7 +25,7 @@ script.
 
 		$('#saveEdits').click(function() {
 			console.log('save')
-			_saveEdits('pg/edit')
+			_saveEdits()
 		})//click
 
 	})//ready
@@ -33,28 +33,27 @@ script.
 	let myCodeMirror
 	function _initCodeMirror() {
 		myCodeMirror = CodeMirror.fromTextArea(
-					document.querySelector('#cms1') ,
-						{
-							mode:  'pug'
-							, lineNumbers: true
-							, tabSize: 3
-							, indentWithTabs: true
-							//, theme: 'neat'
-							//, keyMap: 'sublime'
-							, v1iewportMargin: 'Infinity'
-						}
+			document.querySelector('#cms1') ,
+				{
+					mode:  'pug'
+					, lineNumbers: true
+					, tabSize: 3
+					, indentWithTabs: true
+					//, theme: 'neat'
+					//, keyMap: 'sublime'
+					, v1iewportMargin: 'Infinity'
+				}
 			)
 		myCodeMirror.setSize('100%', '100%')
 		loadjs.done('cm')
 	}// initCM()
 
-	function read(folder_, data) {
+	function read( data) {
 		let fn_ = data[0]
-		let sec_ = '123'
 		let url = '/api/read?secret='
 		let folder = '&folder='
 		let fn = '&fn='
-		url = url + sec_ + folder + folder_ + fn + fn_
+		url = url + getSec() + folder + getPage() + fn + fn_
 		console.log(url)
 
 		fetch(url)
@@ -71,14 +70,13 @@ script.
 		})//fetch
 	}//()
 
-	function _saveEdits(folder_) {
+	function _saveEdits() {
 		let txt = myCodeMirror.getDoc().getValue()
 
-		let sec_ = '123'
 		let url = '/api/write?secret='
 		let folder = '&folder='
 		let fn = '&fn='
-		url = url + sec_ + folder + folder_ + fn + getFN()
+		url = url + getSec() + folder + getPage() + fn + getFN()
 
 		console.log(url)
 

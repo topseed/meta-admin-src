@@ -2,16 +2,13 @@
 table#list1.display(width='95%')
 
 script.
-	loadjs.ready('core', function () {
-		_callList1('123', 'pg/edit')
-	})//ready
 
-	function _callList1(sec, folder_) {
+	function callList1() {
 		console.log('calling list')
 
 		let url = '/api/list?secret='
 		let folder = '&folder='
-		url = url + sec + folder + folder_
+		url = url + getSec() + folder + getPage()
 		console.log(url)
 
 		fetch(url)
@@ -65,7 +62,7 @@ script.
 			setFN(item)
 			console.log( 'clicked on '+getFN()+'\'s row' )
 
-			read('pg/edit', data)
+			read( data)
 		})
 
 	})//ready

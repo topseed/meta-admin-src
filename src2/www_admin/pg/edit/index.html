@@ -10,16 +10,12 @@
 .pusher {
 	margin-top: 1.5em;
 	margin-left: 250px;
-}</style><div class="pusher"><script src="//cdn.jsdelivr.net/npm/split.js@1.3.5/split.min.js"></script><p></p><br><p></p><div id="mForm1"><input id="page1" type="text" name="page" placeholder="blog"><div><input type="text" name="secret" placeholder="123"><input type="text" name="fn" placeholder="index.html"></div></div><p></p><div class="splitCont"><div class="split split-horizontal" id="left"><table class="display" id="list1" width="95%"></table><script>loadjs.ready('core', function () {
-	_callList1('123', 'pg/edit')
-})//ready
-
-function _callList1(sec, folder_) {
+}</style><div class="pusher"><script src="//cdn.jsdelivr.net/npm/split.js@1.3.5/split.min.js"></script><p></p><br><p></p><div id="mForm1"><input id="page1" type="text" name="page" placeholder="blog"><div><input type="text" name="secret" placeholder="123"><input type="text" name="fn" placeholder="index.html"></div></div><p></p><div class="splitCont"><div class="split split-horizontal" id="left"><table class="display" id="list1" width="95%"></table><script>function callList1() {
 	console.log('calling list')
 
 	let url = '/api/list?secret='
 	let folder = '&folder='
-	url = url + sec + folder + folder_
+	url = url + getSec() + folder + getPage()
 	console.log(url)
 
 	fetch(url)
@@ -73,7 +69,7 @@ loadjs.ready(['dwjs'], function () {
 		setFN(item)
 		console.log( 'clicked on '+getFN()+'\'s row' )
 
-		read('pg/edit', data)
+		read( data)
 	})
 
 })//ready</script></div><div class="split split-horizontal" id="right"><textarea id="cms1" rows="400"></textarea><script>loadjs.ready('site', function () {
@@ -99,7 +95,7 @@ loadjs.ready('cmjs', function () {
 
 	$('#saveEdits').click(function() {
 		console.log('save')
-		_saveEdits('pg/edit')
+		_saveEdits()
 	})//click
 
 })//ready
@@ -107,28 +103,27 @@ loadjs.ready('cmjs', function () {
 let myCodeMirror
 function _initCodeMirror() {
 	myCodeMirror = CodeMirror.fromTextArea(
-				document.querySelector('#cms1') ,
-					{
-						mode:  'pug'
-						, lineNumbers: true
-						, tabSize: 3
-						, indentWithTabs: true
-						//, theme: 'neat'
-						//, keyMap: 'sublime'
-						, v1iewportMargin: 'Infinity'
-					}
+		document.querySelector('#cms1') ,
+			{
+				mode:  'pug'
+				, lineNumbers: true
+				, tabSize: 3
+				, indentWithTabs: true
+				//, theme: 'neat'
+				//, keyMap: 'sublime'
+				, v1iewportMargin: 'Infinity'
+			}
 		)
 	myCodeMirror.setSize('100%', '100%')
 	loadjs.done('cm')
 }// initCM()
 
-function read(folder_, data) {
+function read( data) {
 	let fn_ = data[0]
-	let sec_ = '123'
 	let url = '/api/read?secret='
 	let folder = '&folder='
 	let fn = '&fn='
-	url = url + sec_ + folder + folder_ + fn + fn_
+	url = url + getSec() + folder + getPage() + fn + fn_
 	console.log(url)
 
 	fetch(url)
@@ -145,14 +140,13 @@ function read(folder_, data) {
 	})//fetch
 }//()
 
-function _saveEdits(folder_) {
+function _saveEdits() {
 	let txt = myCodeMirror.getDoc().getValue()
 
-	let sec_ = '123'
 	let url = '/api/write?secret='
 	let folder = '&folder='
 	let fn = '&fn='
-	url = url + sec_ + folder + folder_ + fn + getFN()
+	url = url + getSec() + folder + getPage() + fn + getFN()
 
 	console.log(url)
 
@@ -177,8 +171,14 @@ function _saveEdits(folder_) {
 }</style></div></div><p></p><hr><button class="ui button" id="saveEdits" type="submit">Save</button><script>function getPage() {
 	return $('#mForm1 [name="page"]').val()
 }
-function getSecret() {
+function setPage(page) {
+	return $('#mForm1 [name="page"]').val(page)
+}
+function getSec() {
 	return $('#mForm1 [name="secret"]').val()
+}
+function setSec(sec) {
+	return $('#mForm1 [name="secret"]').val(sec)
 }
 function setFN(fn) {
 	 $('#mForm1 [name="fn"]').val(fn)
@@ -186,6 +186,13 @@ function setFN(fn) {
 function getFN() {
 	return $('#mForm1 [name="fn"]').val()
 }
+
+loadjs.ready('core', function () {
+	setSec('123')
+	setPage('pg/edit/tags')
+	callList1(getSec(), getPage())
+})//ready
+
 
 let split = Split(['#left', '#right'], {
 	sizes: [25, 75],
@@ -249,4 +256,4 @@ loadjs.ready('style', function() {
 		console.log(Date.now()-_start)//time to show
 	},1000/60)// 2 frames
 
-})//ready</script><link rel="stylesheet" href="/assets/Semantic-UI/dist/semantic.min.css" onload="cssLoaded()"><!- nB v2.05.16 --></body></html>
+})//ready</script><link rel="stylesheet" href="/assets/Semantic-UI/dist/semantic.min.css" onload="cssLoaded()"><!- nB v2.05.15 --></body></html>

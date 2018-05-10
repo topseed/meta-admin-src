@@ -33,8 +33,14 @@ block main
 		function getPage() {
 			return $('#mForm1 [name="page"]').val()
 		}
-		function getSecret() {
+		function setPage(page) {
+			return $('#mForm1 [name="page"]').val(page)
+		}
+		function getSec() {
 			return $('#mForm1 [name="secret"]').val()
+		}
+		function setSec(sec) {
+			return $('#mForm1 [name="secret"]').val(sec)
 		}
 		function setFN(fn) {
 			 $('#mForm1 [name="fn"]').val(fn)
@@ -42,6 +48,13 @@ block main
 		function getFN() {
 			return $('#mForm1 [name="fn"]').val()
 		}
+
+		loadjs.ready('core', function () {
+			setSec('123')
+			setPage('pg/edit/tags')
+			callList1(getSec(), getPage())
+		})//ready
+
 
 		let split = Split(['#left', '#right'], {
 			sizes: [25, 75],
