@@ -10,10 +10,11 @@ block main
 	p
 	br
 	p
-	input#page1(type='text', name='page', placeholder='blog')
-	div
-		input(type='text', name='secret', placeholder='123')
-		input(type='text', name='fn', placeholder='index.html')
+	#mForm1
+		input#page1(type='text', name='page', placeholder='blog')
+		div
+			input(type='text', name='secret', placeholder='123')
+			input(type='text', name='fn', placeholder='index.html')
 	p
 
 	div.splitCont
@@ -28,6 +29,20 @@ block main
 	button#saveEdits.ui.button(type='submit') Save
 
 	script.
+
+		function getPage() {
+			return $('#mForm1 [name="page"]').val()
+		}
+		function getSecret() {
+			return $('#mForm1 [name="secret"]').val()
+		}
+		function setFN(fn) {
+			 $('#mForm1 [name="fn"]').val(fn)
+		}
+		function getFN() {
+			return $('#mForm1 [name="fn"]').val()
+		}
+
 		let split = Split(['#left', '#right'], {
 			sizes: [25, 75],
 			minSize: [120, 300]

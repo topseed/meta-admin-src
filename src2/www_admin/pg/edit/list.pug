@@ -4,10 +4,10 @@ table#list1.display(width='95%')
 
 script.
 	loadjs.ready('core', function () {
-		callList1('123', 'pg/edit')
+		_callList1('123', 'pg/edit')
 	})//ready
 
-	function callList1(sec, folder_) {
+	function _callList1(sec, folder_) {
 		console.log('calling list')
 
 		let url = '/api/list?secret='
@@ -63,7 +63,8 @@ script.
 		$('#list1 tbody').on('click', 'tr', function () {
 			var data = datatable.row( this ).data()
 			var item = data[0]
-			console.log( 'clicked on '+item+'\'s row' )
+			setFN(item)
+			console.log( 'clicked on '+getFN()+'\'s row' )
 
 			read('pg/edit', data)
 		})
