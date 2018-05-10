@@ -81,13 +81,8 @@ export class FileOps {
 		if (ext =='yaml') {// bake and itemize
 			try {
 				let msg = SrvUtil.bake(folder)
-				SrvUtil.ret(res, msg)
-			} catch(err) {
-				SrvUtil.ret(res, err)
-			}
-			//and then itemize, it goes one up
-			try {
-				let msg = SrvUtil.itemize(folder)
+				//and then itemize, it goes one up
+				msg += SrvUtil.itemize(folder)
 				SrvUtil.ret(res, msg)
 			} catch(err) {
 				SrvUtil.ret(res, err)

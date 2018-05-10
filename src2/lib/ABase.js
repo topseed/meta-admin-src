@@ -64,13 +64,7 @@ class FileOps {
         if (ext == 'yaml') {
             try {
                 let msg = SrvUtil.bake(folder);
-                SrvUtil.ret(res, msg);
-            }
-            catch (err) {
-                SrvUtil.ret(res, err);
-            }
-            try {
-                let msg = SrvUtil.itemize(folder);
+                msg += SrvUtil.itemize(folder);
                 SrvUtil.ret(res, msg);
             }
             catch (err) {
