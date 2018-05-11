@@ -17,7 +17,7 @@ script.
 			let sec = $('#Pform [name="secret"]').val()
 			let folder = $('#nb1 [name="folder"]').val()
 
-			callNb(sec,folder)
+			callNb(sec, folder)
 		})//click
 	})//ready
 
@@ -26,7 +26,7 @@ script.
 		$('#nb1 .message').text('called')
 		$('#nb1 .message').removeClass('hidden')
 
-		let url = '/bake?secret='
+		let url = '/api/bake?secret='
 		let folder = '&folder='
 		url = url + sec + folder + folder_
 		console.log(url)

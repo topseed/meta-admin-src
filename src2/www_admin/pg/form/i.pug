@@ -16,7 +16,7 @@ script.
 			let sec = $('#Pform [name="secret"]').val()
 			let folder = $('#i1 [name="folder"]').val()
 
-			calli(sec,folder)
+			calli(sec, folder)
 		})//click
 	})//ready
 
@@ -25,7 +25,7 @@ script.
 		$('#i1 .message').text('called')
 		$('#i1 .message').removeClass('hidden')
 
-		let url = '/items?secret='
+		let url = '/api/items?secret='
 		let folder = '&folder='
 
 		url = url + sec + folder + folder_

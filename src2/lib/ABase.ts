@@ -335,6 +335,7 @@ export class Srv {
 			}
 		})//
 
+		// http://github.com/topseed/nbake-intro-src/raw/master/helloApp1/page/two/_stickyPlugin.zip
 		SrvUtil.app.post('/api/downloadZip', function (req, res) {
 			let qs = req.query
 			if(!SrvUtil.checkSecret(qs,res))

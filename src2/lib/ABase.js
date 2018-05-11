@@ -7,6 +7,8 @@ const logger = require('tracer').console();
 const fse = require('fs-extra');
 const fs = require('fs');
 const bodyParser = require('body-parser');
+const httpreq = require('httpreq');
+const AdmZip = require('adm-zip');
 class MetaAdmin {
     ver() {
         return "v3.05.11";
@@ -16,6 +18,33 @@ exports.MetaAdmin = MetaAdmin;
 class FileOps {
     constructor(root_) {
         this.root = root_;
+    }
+    downloadZip(folder, url, cb) {
+        let pos = url.lastIndexOf('/');
+        let fn = url.substring(pos);
+        const full = this.root + folder + '/' + fn;
+        logger.trace(full);
+        var options = {
+            timeout: 40 * 1000,
+            binary: true
+        };
+        httpreq.get(url, options, function (errf, res) {
+            if (errf)
+                throw errf;
+            logger.trace(res.statusCode);
+            fs.writeFile(full, res.body, function (errw) {
+                if (errw)
+                    throw errw;
+                logger.trace('downloaded');
+                FileOps._unzip(full, folder);
+                cb();
+            });
+        });
+    }
+    static _unzip(full, folder) {
+        let zip = new AdmZip(full);
+        zip.extractAllTo(folder, true);
+        fs.unlinkSync(full);
     }
     clone(src, dest) {
         logger.trace('copy?');
@@ -236,6 +265,25 @@ class Srv {
                 let txt = req.body;
                 let msg = fo.write(folder, fn, txt);
                 fo.autoBake(res, folder, fn);
+            }
+            catch (err) {
+                SrvUtil.ret(res, err);
+            }
+        });
+        SrvUtil.app.post('/api/downloadZip', function (req, res) {
+            let qs = req.query;
+            if (!SrvUtil.checkSecret(qs, res))
+                return;
+            let keys = Object.keys(qs);
+            if (!keys.includes(SrvUtil.folderProp)) {
+                SrvUtil.ret(res, 'no folder');
+                return;
+            }
+            try {
+                const fo = new FileOps(SrvUtil.mount);
+                fo.downloadZip(qs[SrvUtil.folderProp], qs['url'], function () {
+                    SrvUtil.ret(res, 'done');
+                });
             }
             catch (err) {
                 SrvUtil.ret(res, err);
