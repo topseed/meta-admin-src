@@ -22,8 +22,9 @@ class FileOps {
     downloadZip(folder, url, cb) {
         let pos = url.lastIndexOf('/');
         let fn = url.substring(pos);
-        const full = this.root + folder + '/' + fn;
+        const full = this.root + folder;
         logger.trace(full);
+        logger.trace(url);
         var options = {
             timeout: 40 * 1000,
             binary: true
@@ -32,19 +33,20 @@ class FileOps {
             if (errf)
                 throw errf;
             logger.trace(res.statusCode);
-            fs.writeFile(full, res.body, function (errw) {
+            fs.writeFile(full + '/' + fn, res.body, function (errw) {
                 if (errw)
                     throw errw;
                 logger.trace('downloaded');
-                FileOps._unzip(full, folder);
+                FileOps._unzip(full, fn);
                 cb();
             });
         });
     }
-    static _unzip(full, folder) {
-        let zip = new AdmZip(full);
-        zip.extractAllTo(folder, true);
-        fs.unlinkSync(full);
+    static _unzip(full, fn) {
+        logger.trace(full + fn);
+        logger.trace(full);
+        let zip = new AdmZip(full + fn);
+        zip.extractAllTo(full, true);
     }
     clone(src, dest) {
         logger.trace('copy?');
@@ -270,7 +272,7 @@ class Srv {
                 SrvUtil.ret(res, err);
             }
         });
-        SrvUtil.app.post('/api/downloadZip', function (req, res) {
+        SrvUtil.app.get('/api/downloadZip', function (req, res) {
             let qs = req.query;
             if (!SrvUtil.checkSecret(qs, res))
                 return;
@@ -280,8 +282,10 @@ class Srv {
                 return;
             }
             try {
+                let url = qs['url'];
+                logger.trace(url);
                 const fo = new FileOps(SrvUtil.mount);
-                fo.downloadZip(qs[SrvUtil.folderProp], qs['url'], function () {
+                fo.downloadZip(qs[SrvUtil.folderProp], url, function () {
                     SrvUtil.ret(res, 'done');
                 });
             }

@@ -3,34 +3,38 @@ p
 .ui.segment
 	#plug1.ui.form
 		h4.ui.dividing.header Add plugin
-	.field
-			label Page
-			input(type='text', name='folder', placeholder='blog/one')
+		.field
+				label Page
+				input(type='text', name='folder', placeholder='blog/one')
 		.field
 			label Url of zip (plugin)
 			input(type='text', name='url', placeholder='http://github.com/topseed/nbake-intro-src/raw/master/helloApp1/page/two/_stickyPlugin.zip')
 
 		.ui.message.hidden
-		button.ui.button(type='submit') Items
+		button.ui.button(type='submit') Plugin
 
 script.
 	loadjs.ready('site', function () {
-		$('#i1 .button').click(function(){
+		$('#plug1 .button').click(function(){
 			let sec = $('#Pform [name="secret"]').val()
 			let folder = $('#plug1 [name="folder"]').val()
-			let url = $('#plug1 [name="folder"]').val()
+			let url = $('#plug1 [name="url"]').val()
 
 			downloadZip(sec, folder, url)
 		})//click
 	})//ready
 
+	/*
+	http://github.com/topseed/nbake-intro-src/raw/master/helloApp1/page/two/_stickyPlugin.zip
+
+	*/
 	function downloadZip(sec, folder_, url_) {
 		console.log('calling ...')
 		$('#plug1 .message').text('called')
 		$('#plug1 .message').removeClass('hidden')
 
-		let start = '/items?secret=' + sec
-		let folder = '&folder=' + folder)
+		let start = '/api/downloadZip?secret=' + sec
+		let folder = '&folder=' + folder_
 		let url = '&url=' + url_
 
 		let full  = start + folder + url

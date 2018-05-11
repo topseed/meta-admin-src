@@ -29,11 +29,14 @@ export class FileOps {
 		this.root = root_
 	}
 
+	//	fo.downloadZip(qs[SrvUtil.folderProp], qs['url'], function() {
+
 	downloadZip(folder, url, cb) {
 		let pos = url.lastIndexOf('/')
 		let fn = url.substring(pos)
-		const full = this.root+folder+'/'+fn
+		const full = this.root+folder
 		logger.trace(full)
+		logger.trace(url)
 
 		var options = {
 			timeout: 40*1000,
@@ -43,11 +46,11 @@ export class FileOps {
 			if (errf) throw errf
 
 			logger.trace(res.statusCode)
-			fs.writeFile(full, res.body, function (errw) {
+			fs.writeFile(full +'/'+ fn, res.body, function (errw) {
 				if (errw) throw errw
 
 				logger.trace('downloaded')
-				FileOps._unzip(full, folder)
+				FileOps._unzip(full , fn)
 
 				cb()
 
@@ -55,9 +58,11 @@ export class FileOps {
 		})//get
 	}//()
 
-	static _unzip(full, folder) {
-		let zip = new AdmZip(full)
-		zip.extractAllTo(folder, /*overwrite*/true)
+	static _unzip(full, fn) {
+		logger.trace(full+fn)
+
+		let zip = new AdmZip(full+fn)
+		zip.extractAllTo(full, /*overwrite*/true)
 		//delete
 		fs.unlinkSync(full)
 	}
@@ -335,8 +340,7 @@ export class Srv {
 			}
 		})//
 
-		// http://github.com/topseed/nbake-intro-src/raw/master/helloApp1/page/two/_stickyPlugin.zip
-		SrvUtil.app.post('/api/downloadZip', function (req, res) {
+		SrvUtil.app.get('/api/downloadZip', function (req, res) {
 			let qs = req.query
 			if(!SrvUtil.checkSecret(qs,res))
 				return;
@@ -347,8 +351,10 @@ export class Srv {
 			}
 
 			try {
+				let url = qs['url']
+				logger.trace(url)
 				const fo = new FileOps(SrvUtil.mount)
-				fo.downloadZip(qs[SrvUtil.folderProp], qs['url'], function() {
+				fo.downloadZip(qs[SrvUtil.folderProp], url, function() {
 					SrvUtil.ret(res,'done')
 				})
 			} catch(err) {

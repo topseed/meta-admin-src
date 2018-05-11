@@ -15,7 +15,7 @@
 		let sec = $('#Pform [name="secret"]').val()
 		let folder = $('#nb1 [name="folder"]').val()
 
-		callNb(sec,folder)
+		callNb(sec, folder)
 	})//click
 })//ready
 
@@ -24,7 +24,7 @@ function callNb(sec, folder_) {
 	$('#nb1 .message').text('called')
 	$('#nb1 .message').removeClass('hidden')
 
-	let url = '/bake?secret='
+	let url = '/api/bake?secret='
 	let folder = '&folder='
 	url = url + sec + folder + folder_
 	console.log(url)
@@ -79,7 +79,7 @@ function callClone(sec, src_, dest_) {
 		let sec = $('#Pform [name="secret"]').val()
 		let folder = $('#i1 [name="folder"]').val()
 
-		calli(sec,folder)
+		calli(sec, folder)
 	})//click
 })//ready
 
@@ -88,7 +88,7 @@ function calli(sec, folder_) {
 	$('#i1 .message').text('called')
 	$('#i1 .message').removeClass('hidden')
 
-	let url = '/items?secret='
+	let url = '/api/items?secret='
 	let folder = '&folder='
 
 	url = url + sec + folder + folder_
@@ -105,7 +105,44 @@ function calli(sec, folder_) {
 			$('#i1 .message').text('ERROR: ', err)
 	})//fetch
 
-}//callNb()</script><!--include newBlog--><!--include plugIn--></div><script>loadjs.ready('site', function () {
+}//callNb()</script><p></p><div class="ui segment"><div class="ui form" id="plug1"><h4 class="ui dividing header">Add plugin</h4><div class="field"><label>Page</label><input type="text" name="folder" placeholder="blog/one"></div><div class="field"><label>Url of zip (plugin)</label><input type="text" name="url" placeholder="http://github.com/topseed/nbake-intro-src/raw/master/helloApp1/page/two/_stickyPlugin.zip"></div><div class="ui message hidden"></div><button class="ui button" type="submit">Plugin</button></div></div><script>loadjs.ready('site', function () {
+	$('#plug1 .button').click(function(){
+		let sec = $('#Pform [name="secret"]').val()
+		let folder = $('#plug1 [name="folder"]').val()
+		let url = $('#plug1 [name="url"]').val()
+
+		downloadZip(sec, folder, url)
+	})//click
+})//ready
+
+/*
+http://github.com/topseed/nbake-intro-src/raw/master/helloApp1/page/two/_stickyPlugin.zip
+
+*/
+function downloadZip(sec, folder_, url_) {
+	console.log('calling ...')
+	$('#plug1 .message').text('called')
+	$('#plug1 .message').removeClass('hidden')
+
+	let start = '/api/downloadZip?secret=' + sec
+	let folder = '&folder=' + folder_
+	let url = '&url=' + url_
+
+	let full  = start + folder + url
+	console.log(full)
+
+	fetch(full)
+		.then(function(resp) {
+			return resp.text()
+		}).then(function(txt) {
+			console.log(txt)
+			$('#plug1 .message').text(txt)
+		}).catch(function(err) {
+			console.log('error',err)
+			$('#plug1 .message').text('ERROR: ', err)
+	})//fetch
+
+}//callNb()</script></div><script>loadjs.ready('site', function () {
 	console.log('page 1 script here')
 })</script></div><script>console.log('layout')
 
