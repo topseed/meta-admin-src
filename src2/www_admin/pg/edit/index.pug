@@ -10,12 +10,16 @@ block main
 	p
 	br
 	p
-	#mForm1
-		input#page1(type='text', name='page', placeholder='blog')
-		div
-			input(type='text', name='secret', placeholder='123')
-			input(type='text', name='fn', placeholder='index.html')
-	p
+	#editHead.ui
+		#mForm1.ui.form.mini
+			.fields
+				input.field(type='text', name='page', placeholder='blog')
+			#line2.fields
+				button#listBut1.ui.button(type='submit') List
+				.field.four.wide
+					input(type='text', name='secret', placeholder='123')
+				.field.six.wide
+					input(type='text', name='fn', placeholder='index.html')
 
 	div.splitCont
 		#left.split.split-horizontal
@@ -23,9 +27,7 @@ block main
 
 		#right.split.split-horizontal
 			include zoom
-
-	p
-	hr
+	br
 	button#saveEdits.ui.button(type='submit') Save
 
 	script.
@@ -50,11 +52,10 @@ block main
 		}
 
 		loadjs.ready('core', function () {
-			setSec('123')
-			setPage('pg/edit/tags')
-			callList1(getSec(), getPage())
+			$('#listBut1').click(function() {
+					callList1(getSec(), getPage())
+			})
 		})//ready
-
 
 		let split = Split(['#left', '#right'], {
 			sizes: [25, 75],
@@ -70,13 +71,14 @@ block main
 			overflow:hidden;
 		}
 
-		#page1 {
-			width: 99%
+		#editHead {
+			margin-left: 11px;
+			width: calc(100% - 30px);
 		}
 
 		.splitCont {
-			width: calc(100% - 30px);
-			height: calc(100vh - 220px);
+			width: calc(100% - 10px);
+			height: calc(100vh - 224px);
 
 			border: 2px solid #ddd;
 			border-radius: 5px;
@@ -105,6 +107,6 @@ block main
 		}
 
 		.split.split-horizontal, .gutter.gutter-horizontal {
-			height: calc(100vh - 224px);
+			height: calc(100vh - 222px);
 			float: left;
 		}

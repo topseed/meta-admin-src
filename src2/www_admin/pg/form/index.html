@@ -10,7 +10,7 @@
 .pusher {
 	margin-top: 1.5em;
 	margin-left: 250px;
-}</style><div class="pusher"><p></p><br><p></p><div class="ui text container"><div class="ui form" id="Pform"><h4 class="ui dividing header">Admin Form</h4><div class="field"><label>Secret</label><input type="text" name="secret" placeholder="123"></div></div><p></p><p></p><div class="ui segment"><div class="ui form" id="nb1"><h4 class="ui dividing header">NBake</h4><div class="field"><label>Folder</label><input type="text" name="folder" placeholder="blog"></div><div class="ui message hidden"></div><button class="ui button" type="submit">NBake</button></div></div><script>loadjs.ready('site', function () {
+}</style><div class="pusher"><p></p><br><p></p><div class="ui text container"><div class="ui form small" id="Pform"><h4 class="ui dividing header">Admin Form</h4><div class="field"><label>Secret</label><input type="text" name="secret" placeholder="123"></div></div><p></p><p></p><div class="ui segment"><div class="ui form small" id="nb1"><h4 class="ui dividing header">NBake</h4><div class="field"><label>Folder</label><input type="text" name="folder" placeholder="blog"></div><div class="ui message hidden"></div><button class="ui button" type="submit">NBake</button></div></div><script>loadjs.ready('site', function () {
 	$('#nb1 .button').click(function(){
 		let sec = $('#Pform [name="secret"]').val()
 		let folder = $('#nb1 [name="folder"]').val()
@@ -40,7 +40,7 @@ function callNb(sec, folder_) {
 			$('#nb1 .message').text('ERROR: ', err)
 	})//fetch
 
-}//call()</script><p></p><div class="ui segment"><div class="ui form" id="clone1"><h4 class="ui dividing header">Clone (new page)</h4><div class="field"><label>Source</label><input type="text" name="src" placeholder="page/one"></div><div class="field"><label>New PermaLink</label><input type="text" name="dest" placeholder="page/two"></div><div class="ui message hidden"></div><button class="ui button" type="submit">Clone</button></div></div><script>loadjs.ready('site', function () {
+}//call()</script><p></p><div class="ui segment"><div class="ui form small" id="clone1"><h4 class="ui dividing header">Clone (new page)</h4><div class="field"><label>Source</label><input type="text" name="src" placeholder="page/one"></div><div class="field"><label>New PermaLink</label><input type="text" name="dest" placeholder="page/two"></div><div class="ui message hidden"></div><button class="ui button" type="submit">Clone</button></div></div><script>loadjs.ready('site', function () {
 	$('#clone1 .button').click(function(){
 		let sec = $('#Pform [name="secret"]').val()
 		let src = $('#clone1 [name="src"]').val()
@@ -55,7 +55,7 @@ function callClone(sec, src_, dest_) {
 	$('#clone1 .message').text('called')
 	$('#clone1 .message').removeClass('hidden')
 
-	let url = '/clone?secret='
+	let url = '/api/clone?secret='
 	let src = '&src='
 	let dest = '&dest='
 
@@ -74,7 +74,7 @@ function callClone(sec, src_, dest_) {
 			$('#clone1 .message').text('ERROR: ', err)
 	})//fetch
 
-}//call()</script><p></p><div class="ui segment"><div class="ui form" id="i1"><h4 class="ui dividing header">NBake Items</h4><div class="field"><label>Folder</label><input type="text" name="folder" placeholder="blog"></div><div class="ui message hidden"></div><button class="ui button" type="submit">Items</button></div></div><script>loadjs.ready('site', function () {
+}//call()</script><p></p><div class="ui segment"><div class="ui form small" id="i1"><h4 class="ui dividing header">NBake Items</h4><div class="field"><label>Folder</label><input type="text" name="folder" placeholder="blog"></div><div class="ui message hidden"></div><button class="ui button" type="submit">Items</button></div></div><script>loadjs.ready('site', function () {
 	$('#i1 .button').click(function(){
 		let sec = $('#Pform [name="secret"]').val()
 		let folder = $('#i1 [name="folder"]').val()
@@ -105,7 +105,7 @@ function calli(sec, folder_) {
 			$('#i1 .message').text('ERROR: ', err)
 	})//fetch
 
-}//callNb()</script><p></p><div class="ui segment"><div class="ui form" id="plug1"><h4 class="ui dividing header">Add plugin</h4><div class="field"><label>Page</label><input type="text" name="folder" placeholder="blog/one"></div><div class="field"><label>Url of zip (plugin)</label><input type="text" name="url" placeholder="http://github.com/topseed/nbake-intro-src/raw/master/helloApp1/page/two/_stickyPlugin.zip"></div><div class="ui message hidden"></div><button class="ui button" type="submit">Plugin</button></div></div><script>loadjs.ready('site', function () {
+}//callNb()</script><p></p><div class="ui segment"><div class="ui form small" id="plug1"><h4 class="ui dividing header">Add plugin</h4><div class="field"><label>Page</label><input type="text" name="folder" placeholder="blog/one"></div><div class="field"><label>Url of zip (plugin)</label><input type="text" name="url" placeholder="http://github.com/topseed/nbake-intro-src/raw/master/helloApp1/page/two/_stickyPlugin.zip"></div><div class="ui message hidden"></div><button class="ui button" type="submit">Plugin</button></div></div><script>loadjs.ready('site', function () {
 	$('#plug1 .button').click(function(){
 		let sec = $('#Pform [name="secret"]').val()
 		let folder = $('#plug1 [name="folder"]').val()
@@ -157,4 +157,4 @@ loadjs.ready('style', function() {
 		console.log(Date.now()-_start)//time to show
 	},1000/60)// 2 frames
 
-})//ready</script><link rel="stylesheet" href="/assets/Semantic-UI/dist/semantic.min.css" onload="cssLoaded()"><!- nB v2.05.17 --></body></html>
+})//ready</script><link rel="stylesheet" href="/assets/Semantic-UI/dist/semantic.min.css" onload="cssLoaded()"><!- nB v2.05.15 --></body></html>
