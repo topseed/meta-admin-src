@@ -19,7 +19,7 @@ import { objectTypeAnnotation } from 'babel-types';
 
 export class MetaAdmin {
 	ver() {
-		return "v3.05.11"
+		return "v3.05.14"
 	}
 }
 

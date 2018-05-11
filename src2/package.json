@@ -1,6 +1,6 @@
 {
 	"name": "meta-admin",
-	"version": "3.05.11",
+	"version": "3.05.14",
 	"description": "meta nbake admin",
 	"main": "index.js",
 	"license": "APACHE2",

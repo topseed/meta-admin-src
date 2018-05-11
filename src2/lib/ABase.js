@@ -11,7 +11,7 @@ const httpreq = require('httpreq');
 const AdmZip = require('adm-zip');
 class MetaAdmin {
     ver() {
-        return "v3.05.11";
+        return "v3.05.14";
     }
 }
 exports.MetaAdmin = MetaAdmin;
