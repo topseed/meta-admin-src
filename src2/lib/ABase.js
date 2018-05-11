@@ -44,9 +44,9 @@ class FileOps {
     }
     static _unzip(full, fn) {
         logger.trace(full + fn);
-        logger.trace(full);
         let zip = new AdmZip(full + fn);
         zip.extractAllTo(full, true);
+        fs.unlinkSync(full + fn);
     }
     clone(src, dest) {
         logger.trace('copy?');

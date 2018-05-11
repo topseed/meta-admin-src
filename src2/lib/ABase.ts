@@ -64,7 +64,7 @@ export class FileOps {
 		let zip = new AdmZip(full+fn)
 		zip.extractAllTo(full, /*overwrite*/true)
 		//delete
-		fs.unlinkSync(full)
+		fs.unlinkSync(full+fn)
 	}
 
 	clone(src, dest):string {
