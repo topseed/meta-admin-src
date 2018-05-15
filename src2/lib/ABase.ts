@@ -15,7 +15,6 @@ const httpreq = require('httpreq')
 const AdmZip = require('adm-zip')
 
 import { Meta, Dirs, Bake, Items, Tag, NBake } from 'nbake/lib/Base'
-import { objectTypeAnnotation } from 'babel-types';
 
 export class MetaAdmin {
 	ver() {
