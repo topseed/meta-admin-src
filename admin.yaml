@@ -1,12 +1,10 @@
 # nbake:
 # mount: /Users/uptim/Documents/GitHub/nbake-src/exApp1
-mount: /Users/uptim/Documents/GitHub/meta-bake-ex/src2/www_admin/
+mount: /Users/uptim/Documents/GitHub/meta-bake-ex/exMeta2/www_admin/
 
 # admin www files
-srv_www: /Users/uptim/Documents/GitHub/meta-bake-ex/src2/www_admin/
+srv_www: /Users/uptim/Documents/GitHub/meta-bake-ex/exMeta2/www_admin/
 
 secret: 123
 port: 8081
 
-# public S3 url to surf, future
-public: http://165.227.195.79:8080/
