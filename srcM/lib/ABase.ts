@@ -14,11 +14,11 @@ const bodyParser = require('body-parser')
 const httpreq = require('httpreq')
 const AdmZip = require('adm-zip')
 
-import { Meta, Dirs, Bake, Items, Tag, NBake } from 'nbake/lib/Base'
+import {  } from 'nbake/lib/Base'
 
 export class MetaAdmin {
 	ver() {
-		return "v3.05.14"
+		return "v3.05.18"
 	}
 }
 
