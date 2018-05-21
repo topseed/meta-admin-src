@@ -1,6 +1,6 @@
 {
 	"name": "meta-admin",
-	"version": "3.05.18",
+	"version": "3.05.21",
 	"description": "meta nbake admin",
 	"main": "index.js",
 	"license": "APACHE2",
@@ -24,6 +24,6 @@
 		"fs-extra": "^5.0.0",
 		"httpreq": "^0.4.24",
 		"image-downloader": "^3.3.0",
-		"nbake": ">=2.5.18"
+		"nbake": ">=2.5.21"
 	}
 }

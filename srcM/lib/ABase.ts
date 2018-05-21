@@ -18,7 +18,7 @@ import {  } from 'nbake/lib/Base'
 
 export class MetaAdmin {
 	ver() {
-		return "v3.05.18"
+		return "v3.05.21"
 	}
 }
 
